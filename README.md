@@ -14,7 +14,7 @@ every question's results and computes retrieval metrics.
 | `rag/chunker.py`, `rag/embedder.py`, `rag/prompt.py`, `rag/retriever.py`, `rag/store.py` | **Unchanged.** |
 
 New files: `metrics.py`, `evaluate.py`, `corpus_processed/` (the 425-doc
-Kubernetes corpus), `eval_dataset/` (the 100/128-question sets), `okf/`
+Kubernetes corpus), `eval_dataset/` (the 128-question benchmark), `okf/`
 and `build_okf.py` (the two OKF bundles - see "Testing OKF representations"
 below).
 
@@ -352,12 +352,13 @@ arm. Now every leaf, any size, is unconditionally passed through
 `rag.chunker.chunk_text` with the identical 150-word/30-word-overlap
 settings the conventional baseline uses before embedding, and a leaf's
 dense score is the max similarity across its own pieces - verified
-directly: every embedded piece measured at or under 150 words, zero
-exceptions, across all 2,657 leaves (8,497 pieces once oversized ones are
-split). Because this reuses the exact function and parameters the
-already-relied-upon baseline chunker uses, there's nothing new to verify
-against MiniLM's limit - it inherits the baseline's own margin by
-construction, rather than depending on a separately-chosen threshold.
+directly: every embedded piece was verified to be token-safe for the configured
+embedding model; the splitter uses the real tokenizer rather than treating
+word count as a proxy for the MiniLM limit. The conventional retrieval-unit
+chunking remains 150 words with 30-word overlap, while embedding pieces are
+created as needed from those chunks/leaves. Because the same chunking
+function and parameters are reused, the retrieval-unit definition remains
+unchanged.
 
 **4. Context size isn't controlled.** Was true, and had two separate bugs
 under the surface once a first fix was attempted - both now fixed and
@@ -399,7 +400,9 @@ verified for real:
   dropped for being oversized vs. no-room-left) - additive, nothing
   renamed or removed from what the non-OKF baseline runs already produce.
 
-Real, corrected numbers (BM25, all 128 questions, computed directly here):
+Real, corrected retrieval-only diagnostic numbers (BM25, 128 benchmark
+questions; retrieval metrics exclude the 5 unanswerable questions,
+computed directly here):
 
 | Mode | Recall, top-k=5 (uncontrolled) | Recall, budget=1100 tokens (both bugs fixed) |
 |---|---|---|
@@ -503,6 +506,55 @@ verified structurally only (no crash, sane fusion/ranking, using a
 stand-in embedder - same approach as the "Verification note" below) -
 their real numbers need your machine's actual `sentence-transformers`
 model.
+
+## Final reported experiment configuration
+
+The paper's main controlled comparison uses six arms over the same 128-question
+Kubernetes benchmark:
+
+| Arm | Configuration |
+|---|---|
+| **B1** | Repaired dense retrieval using `all-MiniLM-L6-v2` with token-safe multi-vector embedding |
+| **B2** | BM25 + repaired dense retrieval fused with Reciprocal Rank Fusion |
+| **S3** | B1 + OKF Version A (document structure) |
+| **S4** | B1 + OKF Version B (object relationships) |
+| **S5** | B2 + OKF Version A (document structure) |
+| **S6** | B2 + OKF Version B (object relationships) |
+
+The final evaluation uses the same 150-word / 30-word-overlap conventional chunk
+definition throughout. Dense embedding splits chunks into token-safe pieces
+using the real `all-MiniLM-L6-v2` tokenizer; piece-level similarities are
+max-pooled back to the original chunk. Thus the 40.3% of original chunks that
+exceed 256 tokenizer tokens remains a diagnostic fact about the chunk
+definition, but those chunks are no longer embedded as single truncated
+vectors.
+
+Retrieval metrics are evaluated on the **123 answerable questions**; the
+**5 unanswerable questions** are excluded because they have no gold evidence
+source. Generation uses local **`qwen3.5:4b`** through Ollama. RAGAS uses
+**`qwen2.5:7b`** as a separate judge model, distinct from the generator. RAGAS
+also excludes the five unanswerable questions; a small number of answerable
+cases may additionally be unscored when the judge request exceeds the model
+context-length limit.
+
+The final reported full-recall results are:
+
+| Arm | Full recall |
+|---|---:|
+| B1 | **84.6%** |
+| B2 | **88.6%** |
+| S3 | **74.8%** |
+| S4 | **34.2%** |
+| S5 | **87.8%** |
+| S6 | **87.8%** |
+
+Five paired comparisons form the Holm family: B1 vs B2, B1 vs S3, B1 vs S4,
+B2 vs S5, and B2 vs S6. The reported p-values are B1-vs-B2 `p=0.23`,
+B1-vs-S3 `p=0.0118` (Holm-adjusted `p=0.047`), B1-vs-S4 `p<0.0001`,
+B2-vs-S5 `p=1.0`, and B2-vs-S6 `p=1.0`.
+
+These are the final paper results, distinct from the earlier contaminated-index
+and pre-fix diagnostic runs documented below.
 
 ## What gets saved
 
@@ -626,8 +678,9 @@ was verified directly:
   stand-in embedder and `--dry-run`, confirming the JSONL schema, resume
   logic, and metrics report are all correct
 
-Ensure Ollama is running with `qwen3.5:4b` pulled, then run the two commands above to get real
-retrieval and generation numbers.
+Ensure Ollama is running with `qwen3.5:4b` pulled when reproducing the
+live generation runs. The final reported B1/B2 and OKF results use the real
+embedding model and the repaired multi-vector configuration.
 
 **OKF addition, same sandbox, same constraint:** `build_okf.py` was run
 for real against the actual 425-doc corpus (no stand-ins - both bundles
@@ -676,15 +729,16 @@ the token budget in every tested case. The full `rag.py ingest` ->
 `rag/store.py` -> `rag/retriever.py` pipeline was run end-to-end against
 the real 425-doc/4,644-chunk corpus (chunk_size=150/overlap=30 confirmed
 unchanged in the resulting `index_meta.json`), producing a real
-multi-vector index (4,644 chunks -> 5,308 pieces under the synthetic
-tokenizer), and `evaluate.py` was run against it across `dense`/`hybrid`/
+multi-vector index; the sandbox's synthetic-tokenizer verification produced
+5,308 pieces, whereas the final real-tokenizer index used for the reported
+experiments contains 7,293 embedded pieces. `evaluate.py` was run against it
+across `dense`/`hybrid`/
 `okf_structure_hybrid`/`okf_relations_dense`/budget-controlled modes with
 no errors. Backward compatibility was verified explicitly: an index built
 with `--single-vector-per-chunk` has no `piece_to_chunk.json` and
 `retrieve()` automatically falls back to the original direct-lookup path,
 confirmed to produce results identical to calling `retrieve()` with its
-old, pre-fix argument signature. The real *accuracy* delta this produces
-(does max-pooled multi-vector retrieval actually improve Recall/Precision
-over the old truncated-embedding baseline) needs the real encoder and
-hasn't been measured yet - re-run your B1/B2 evaluation after rebuilding
-the index to get that number.
+old, pre-fix argument signature. The final reported B1/B2 and OKF experiments use the real
+`all-MiniLM-L6-v2` multi-vector configuration. Their JSONL outputs and
+`_metrics.json` summaries are the runs used for the paper's reported
+retrieval results.
