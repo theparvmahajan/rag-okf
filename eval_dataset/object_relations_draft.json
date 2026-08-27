@@ -1,0 +1,105 @@
+{
+  "questions": [
+    {
+      "id": "OR01",
+      "category": "object_relations",
+      "question": "If you delete a Deployment using the default `kubectl delete` behavior, what happens to its ReplicaSet and Pods, and what Kubernetes mechanism makes that happen?",
+      "gold_answer": "By default Kubernetes uses background cascading deletion: the Deployment (owner) object is deleted from the API immediately, and the garbage collection controller then cleans up the dependent ReplicaSet and its Pods afterward, in the background. This works because the ReplicaSet carries an owner reference back to the Deployment, and each Pod carries an owner reference back to the ReplicaSet - the garbage collector uses these owner references, not labels, to find and delete now-ownerless dependents once the owner is gone.",
+      "evidence": [
+        {
+          "source": "concepts/architecture/garbage-collection.md",
+          "url": "https://kubernetes.io/docs/concepts/architecture/garbage-collection/",
+          "lines": "18-22, 49-56, 89-96"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "hard",
+      "verified": true
+    },
+    {
+      "id": "OR02",
+      "category": "object_relations",
+      "question": "A Service selects Pods using `app.kubernetes.io/name: MyApp` as its selector. If you relabel a running, currently-matched Pod so it no longer has that label value, does the Service keep routing traffic to it?",
+      "gold_answer": "No, once the Service's controller notices the change. Unlike a Deployment's ownership of its Pods (which uses owner references), a Service's relationship to its Pods is dynamic label matching: the controller for the Service continuously scans for Pods that match its selector and updates the Service's EndpointSlices accordingly. Once the Pod no longer matches the selector, it's dropped from the set of endpoints the Service routes to - there's no persistent binding keeping it attached.",
+      "evidence": [
+        {
+          "source": "concepts/services-networking/service.md",
+          "url": "https://kubernetes.io/docs/concepts/services-networking/service/",
+          "lines": "80-93"
+        },
+        {
+          "source": "concepts/architecture/garbage-collection.md",
+          "url": "https://kubernetes.io/docs/concepts/architecture/garbage-collection/",
+          "lines": "23-28"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "hard",
+      "verified": true
+    },
+    {
+      "id": "OR03",
+      "category": "object_relations",
+      "question": "A HorizontalPodAutoscaler targets a Deployment via `scaleTargetRef` and is actively managing its replica count. If you run `kubectl scale` on that Deployment to set a different replica count manually, what happens the next time the HPA control loop runs, and how soon does that happen by default?",
+      "gold_answer": "By default the HPA control loop runs every 15 seconds (set by the `--horizontal-pod-autoscaler-sync-period` parameter on kube-controller-manager). On its next iteration, it queries current metrics for the Pods selected by the target's `.spec.selector` and computes a desired replica count from those metrics - then sets the Deployment's replica count to that value, overwriting the manual `kubectl scale` change. The HPA doesn't track or respect a manually-set count; it always drives the target back toward what its own metric calculation says.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/autoscaling/horizontal-pod-autoscale.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/autoscaling/horizontal-pod-autoscale/",
+          "lines": "34-65"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "hard",
+      "verified": true
+    },
+    {
+      "id": "OR04",
+      "category": "object_relations",
+      "question": "A Pod has two containers consuming the same ConfigMap two different ways: one mounts it as a regular volume, the other injects it via environment variables. If you update the ConfigMap, which container(s) see the new values without the Pod being restarted?",
+      "gold_answer": "Only the container using the volume mount - and even then not instantly: volume-mounted ConfigMap keys are eventually updated, with the propagation delay depending on how the kubelet is configured to sync (watch-based by default). The container using environment variables will not see the update at all without a Pod restart, since environment variables are only read once, at container start.",
+      "evidence": [
+        {
+          "source": "concepts/configuration/configmap.md",
+          "url": "https://kubernetes.io/docs/concepts/configuration/configmap/",
+          "lines": "171-185"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "hard",
+      "verified": true
+    },
+    {
+      "id": "OR05",
+      "category": "object_relations",
+      "question": "Two PersistentVolumeClaims could both technically match the same statically-provisioned PersistentVolume (same access mode, sufficient capacity). Once the first PVC binds to that PV, can the second PVC also bind to it?",
+      "gold_answer": "No. A PVC-to-PV binding is exclusive and one-to-one, established through a bidirectional ClaimRef once bound. The PV is then unavailable to any other PVC regardless of whether that PVC's requirements would also have matched - the second PVC simply remains unbound until a different matching PV becomes available.",
+      "evidence": [
+        {
+          "source": "concepts/storage/persistent-volumes.md",
+          "url": "https://kubernetes.io/docs/concepts/storage/persistent-volumes/",
+          "lines": "73-81"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "OR06",
+      "category": "object_relations",
+      "question": "You create a NetworkPolicy in a namespace with a `podSelector` matching Pods labeled `role=db`. Does this NetworkPolicy have any effect on a different Pod in the same namespace labeled `role=web`, which isn't selected by any NetworkPolicy?",
+      "gold_answer": "No. A Pod is only isolated (traffic-restricted) for a given direction if at least one NetworkPolicy actually selects that Pod via its podSelector and covers that direction. Since the `role=web` Pod isn't selected by this or any other NetworkPolicy, it stays non-isolated and continues to allow all inbound and outbound traffic by default - a NetworkPolicy targeting a different set of Pods elsewhere in the namespace has no implicit effect on Pods it doesn't select.",
+      "evidence": [
+        {
+          "source": "concepts/services-networking/network-policies.md",
+          "url": "https://kubernetes.io/docs/concepts/services-networking/network-policies/",
+          "lines": "30-49"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "questions": [
+    {
+      "id": "OR13",
+      "category": "object_relations",
+      "question": "A DaemonSet is running its Pod on every Node in the cluster. One of those Nodes is removed from the cluster (e.g. decommissioned). Does the DaemonSet create a replacement Pod on a different Node to make up for it?",
+      "gold_answer": "No. A DaemonSet doesn't manage a floating replica count the way a Deployment does - it ties exactly one Pod to each matching Node. When a Node is removed, the Pod that was running on it is simply garbage collected, with no replacement created elsewhere. A new Pod only appears if/when a new Node joins the cluster that matches the DaemonSet's node selector/affinity rules.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/controllers/daemonset.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/",
+          "lines": "1-3"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": false
+    },
+    {
+      "id": "OR14",
+      "category": "object_relations",
+      "question": "You delete a DaemonSet using `kubectl delete --cascade=orphan`. What happens to the Pods it was managing, and what happens if you later create a new DaemonSet with the same selector?",
+      "gold_answer": "The Pods are left running on their nodes rather than being deleted - `--cascade=orphan` skips the normal cleanup that deleting a DaemonSet would otherwise trigger. If you subsequently create a new DaemonSet with the same selector, it adopts those existing orphaned Pods as its own rather than creating fresh ones, and will only replace any of them going forward according to its `updateStrategy`.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/controllers/daemonset.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/",
+          "lines": "179-182"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "hard",
+      "verified": false
+    },
+    {
+      "id": "OR15",
+      "category": "object_relations",
+      "question": "You delete a PriorityClass that several currently-running Pods reference by name. Does deleting it change the priority of those already-running Pods?",
+      "gold_answer": "No. Existing Pods that reference the deleted PriorityClass's name keep their priority unchanged - deleting a PriorityClass doesn't retroactively affect Pods that already used it. The only effect is forward-looking: you can no longer create new Pods that reference that PriorityClass name.",
+      "evidence": [
+        {
+          "source": "concepts/scheduling-eviction/pod-priority-preemption.md",
+          "url": "https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/",
+          "lines": "65-70"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": false
+    }
+  ]
+}

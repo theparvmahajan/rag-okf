@@ -1,0 +1,2145 @@
+{
+  "dataset_name": "kubernetes-docs-rag-eval-100",
+  "corpus": "corpus_processed/ (kubernetes/website, concepts+tasks+setup+tutorials)",
+  "num_questions": 100,
+  "category_counts": {
+    "factual": 25,
+    "procedural": 20,
+    "conceptual": 15,
+    "comparison": 15,
+    "multi_document": 15,
+    "multi_hop": 5,
+    "unanswerable": 5
+  },
+  "methodology": "candidate generation from a fact-sheet extracted while reading the actual processed corpus, followed by manual verification of every item against source line ranges, followed by gold answer and evidence attachment",
+  "questions": [
+    {
+      "id": "F01",
+      "category": "factual",
+      "question": "What is the default value of `.spec.strategy.rollingUpdate.maxUnavailable` for a Deployment?",
+      "gold_answer": "25%.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/controllers/deployment.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/",
+          "lines": "1153-1156"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "F02",
+      "category": "factual",
+      "question": "What is the default value of `.spec.strategy.rollingUpdate.maxSurge` for a Deployment?",
+      "gold_answer": "25%.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/controllers/deployment.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/",
+          "lines": "1163-1167"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "F03",
+      "category": "factual",
+      "question": "What is the default value of `.spec.revisionHistoryLimit` for a Deployment?",
+      "gold_answer": "10.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/controllers/deployment.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/",
+          "lines": "1041-1043"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "F04",
+      "category": "factual",
+      "question": "What is the default value of `.spec.progressDeadlineSeconds` for a Deployment?",
+      "gold_answer": "600 seconds (10 minutes).",
+      "evidence": [
+        {
+          "source": "concepts/workloads/controllers/deployment.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/",
+          "lines": "1262-1267"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "F05",
+      "category": "factual",
+      "question": "What is the default value of `.spec.minReadySeconds` for a Deployment?",
+      "gold_answer": "0 - a newly created Pod is considered available as soon as it is ready.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/controllers/deployment.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/",
+          "lines": "1272-1276"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "F06",
+      "category": "factual",
+      "question": "What is the default value of `.spec.backoffLimit` for a Job?",
+      "gold_answer": "6 (unless a per-index backoff limit is set, in which case it defaults to 2147483647).",
+      "evidence": [
+        {
+          "source": "concepts/workloads/controllers/job.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/job/",
+          "lines": "421-424"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "F07",
+      "category": "factual",
+      "question": "If both `.spec.completions` and `.spec.parallelism` are left unset on a Job, what do they default to?",
+      "gold_answer": "Both default to 1, making it a non-parallel Job.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/controllers/job.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/job/",
+          "lines": "220-221"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "F08",
+      "category": "factual",
+      "question": "What is the default `.spec.completionMode` for a Job?",
+      "gold_answer": "NonIndexed.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/controllers/job.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/job/",
+          "lines": "253-256"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "F09",
+      "category": "factual",
+      "question": "What is the default `.spec.concurrencyPolicy` for a CronJob?",
+      "gold_answer": "Allow - concurrently running Jobs are permitted.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/controllers/cron-jobs.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/",
+          "lines": "105-109"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "F10",
+      "category": "factual",
+      "question": "Which `restartPolicy` values are allowed in a Job's Pod template?",
+      "gold_answer": "Only `Never` or `OnFailure`; `Always` is not allowed for a Job's Pod template.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/controllers/job.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/job/",
+          "lines": "188-190"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "F11",
+      "category": "factual",
+      "question": "What is the default Service `type` if none is specified?",
+      "gold_answer": "ClusterIP.",
+      "evidence": [
+        {
+          "source": "concepts/services-networking/service.md",
+          "url": "https://kubernetes.io/docs/concepts/services-networking/service/",
+          "lines": "373-378"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "F12",
+      "category": "factual",
+      "question": "What is the default port range used for NodePort Services?",
+      "gold_answer": "30000-32767 (controlled by the `--service-node-port-range` flag).",
+      "evidence": [
+        {
+          "source": "concepts/services-networking/service.md",
+          "url": "https://kubernetes.io/docs/concepts/services-networking/service/",
+          "lines": "430-434"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "F13",
+      "category": "factual",
+      "question": "What are the three supported Ingress `pathType` values?",
+      "gold_answer": "`Exact`, `Prefix`, and `ImplementationSpecific`.",
+      "evidence": [
+        {
+          "source": "concepts/services-networking/ingress.md",
+          "url": "https://kubernetes.io/docs/concepts/services-networking/ingress/",
+          "lines": "147-159"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "F14",
+      "category": "factual",
+      "question": "What is the maximum allowed size of a ConfigMap?",
+      "gold_answer": "1 MiB.",
+      "evidence": [
+        {
+          "source": "concepts/configuration/configmap.md",
+          "url": "https://kubernetes.io/docs/concepts/configuration/configmap/",
+          "lines": "18-21"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "F15",
+      "category": "factual",
+      "question": "Since which Kubernetes version can a ConfigMap be marked immutable?",
+      "gold_answer": "v1.19.",
+      "evidence": [
+        {
+          "source": "concepts/configuration/configmap.md",
+          "url": "https://kubernetes.io/docs/concepts/configuration/configmap/",
+          "lines": "41-43"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "F16",
+      "category": "factual",
+      "question": "Are Kubernetes Secrets encrypted by default in etcd?",
+      "gold_answer": "No - by default Secrets are stored unencrypted (only base64-encoded, not encrypted) in the API server's underlying etcd data store.",
+      "evidence": [
+        {
+          "source": "concepts/configuration/secret.md",
+          "url": "https://kubernetes.io/docs/concepts/configuration/secret/",
+          "lines": "17-19"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "F17",
+      "category": "factual",
+      "question": "What are the four PersistentVolume access modes?",
+      "gold_answer": "ReadWriteOnce, ReadOnlyMany, ReadWriteMany, and ReadWriteOncePod.",
+      "evidence": [
+        {
+          "source": "concepts/storage/persistent-volumes.md",
+          "url": "https://kubernetes.io/docs/concepts/storage/persistent-volumes/",
+          "lines": "22-24"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "F18",
+      "category": "factual",
+      "question": "What reclaim policy do dynamically provisioned PersistentVolumes get if their StorageClass doesn't specify one?",
+      "gold_answer": "Delete.",
+      "evidence": [
+        {
+          "source": "concepts/storage/storage-classes.md",
+          "url": "https://kubernetes.io/docs/concepts/storage/storage-classes/",
+          "lines": "104-114"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "F19",
+      "category": "factual",
+      "question": "What is the default `volumeBindingMode` for a StorageClass when the field is left unset?",
+      "gold_answer": "Immediate.",
+      "evidence": [
+        {
+          "source": "concepts/storage/storage-classes.md",
+          "url": "https://kubernetes.io/docs/concepts/storage/storage-classes/",
+          "lines": "143-148"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "F20",
+      "category": "factual",
+      "question": "What is the default Pod Management Policy for a StatefulSet?",
+      "gold_answer": "OrderedReady.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/controllers/statefulset.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/",
+          "lines": "255-258"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "F21",
+      "category": "factual",
+      "question": "What does a Pod's `restartPolicy` default to if not specified?",
+      "gold_answer": "Always.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/pods/pod-lifecycle.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/",
+          "lines": "253-255"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "F22",
+      "category": "factual",
+      "question": "What is the default `periodSeconds` for a container probe?",
+      "gold_answer": "10 seconds.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/pods/probes.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/pods/probes/",
+          "lines": "232-234"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "F23",
+      "category": "factual",
+      "question": "What is the default `failureThreshold` for a container probe?",
+      "gold_answer": "3.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/pods/probes.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/pods/probes/",
+          "lines": "242"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "F24",
+      "category": "factual",
+      "question": "What is the default `initialDelaySeconds` for a container probe?",
+      "gold_answer": "0 seconds.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/pods/probes.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/pods/probes/",
+          "lines": "230"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "F25",
+      "category": "factual",
+      "question": "What is the default graceful termination period granted to a Pod?",
+      "gold_answer": "30 seconds.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/pods/pod-lifecycle.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/",
+          "lines": "119"
+        },
+        {
+          "source": "concepts/workloads/pods/probes.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/pods/probes/",
+          "lines": "245"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "P01",
+      "category": "procedural",
+      "question": "How do you configure a Deployment named `nginx-deployment` so the controller reports a stalled rollout after 10 minutes, using kubectl patch?",
+      "gold_answer": "Patch its `.spec.progressDeadlineSeconds` to 600, e.g. `kubectl patch deployment/nginx-deployment -p '{\"spec\":{\"progressDeadlineSeconds\":600}}'`.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/controllers/deployment.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/",
+          "lines": "905-910"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "P02",
+      "category": "procedural",
+      "question": "How do you remove a taint you previously added to a node with `kubectl taint`?",
+      "gold_answer": "Repeat the same taint expression with a trailing minus sign, e.g. `kubectl taint nodes node1 key1=value1:NoSchedule-`.",
+      "evidence": [
+        {
+          "source": "concepts/scheduling-eviction/taint-and-toleration.md",
+          "url": "https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",
+          "lines": "28-31"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "P03",
+      "category": "procedural",
+      "question": "How do you add a taint to node `node1` so that only Pods with a matching toleration can be scheduled there?",
+      "gold_answer": "`kubectl taint nodes node1 key1=value1:NoSchedule`.",
+      "evidence": [
+        {
+          "source": "concepts/scheduling-eviction/taint-and-toleration.md",
+          "url": "https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",
+          "lines": "21-25"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "P04",
+      "category": "procedural",
+      "question": "How do you mark an existing ConfigMap definition as immutable?",
+      "gold_answer": "Add `immutable: true` to the ConfigMap manifest.",
+      "evidence": [
+        {
+          "source": "concepts/configuration/configmap.md",
+          "url": "https://kubernetes.io/docs/concepts/configuration/configmap/",
+          "lines": "282-293"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "P05",
+      "category": "procedural",
+      "question": "How do you view the decoded (non-base64) value of a key stored in a Secret using kubectl?",
+      "gold_answer": "Extract the base64 value with `kubectl get secret <name> -o jsonpath='{.data.*}'` and pipe it through `base64 -d` to decode it.",
+      "evidence": [
+        {
+          "source": "concepts/configuration/secret.md",
+          "url": "https://kubernetes.io/docs/concepts/configuration/secret/",
+          "lines": "251"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "P06",
+      "category": "procedural",
+      "question": "How do you configure a Deployment to kill all existing Pods before creating replacements, instead of a rolling update?",
+      "gold_answer": "Set `.spec.strategy.type` to `Recreate`.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/controllers/deployment.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/",
+          "lines": "1134-1137"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "P07",
+      "category": "procedural",
+      "question": "What should you do to a StatefulSet before deleting it, if you want its Pods to terminate in order and gracefully?",
+      "gold_answer": "Scale the StatefulSet down to 0 replicas first, then delete it.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/controllers/statefulset.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/",
+          "lines": "29-31"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "P08",
+      "category": "procedural",
+      "question": "How do you configure a container so that its liveness and readiness probes don't begin until an initialization check succeeds?",
+      "gold_answer": "Add a `startupProbe` to the container; liveness and readiness probe delays don't begin until the startup probe succeeds.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/pods/probes.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/pods/probes/",
+          "lines": "19-24"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "P09",
+      "category": "procedural",
+      "question": "How do you define multiple containers that must each finish, in order, before a Pod's main application containers start?",
+      "gold_answer": "List them under the Pod's `initContainers` field; they run sequentially and each must succeed before the next one starts.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/pods/init-containers.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/pods/init-containers/",
+          "lines": "48-51"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "P10",
+      "category": "procedural",
+      "question": "How do you make a DaemonSet's Pods use a scheduler other than the default one?",
+      "gold_answer": "Set `.spec.template.spec.schedulerName` on the DaemonSet.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/controllers/daemonset.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/",
+          "lines": "105-106"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "P11",
+      "category": "procedural",
+      "question": "How do you request a specific, fixed NodePort value (e.g. 30007) for a Service instead of letting Kubernetes pick one?",
+      "gold_answer": "Set `nodePort: 30007` explicitly under the relevant entry in `.spec.ports` on a Service of `type: NodePort`.",
+      "evidence": [
+        {
+          "source": "concepts/services-networking/service.md",
+          "url": "https://kubernetes.io/docs/concepts/services-networking/service/",
+          "lines": "457-466"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "P12",
+      "category": "procedural",
+      "question": "How do you configure a Job to run 8 tasks with all 8 running in parallel, each aware of its own index?",
+      "gold_answer": "Set `.spec.completions: 8`, `.spec.parallelism: 8`, and `.spec.completionMode: Indexed`.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/controllers/job.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/job/",
+          "lines": "317-319"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "P13",
+      "category": "procedural",
+      "question": "How do you configure a CronJob to keep only 1 completed Job in its history?",
+      "gold_answer": "Set `.spec.successfulJobsHistoryLimit: 1`.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/controllers/cron-jobs.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/",
+          "lines": "137-141"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "P14",
+      "category": "procedural",
+      "question": "How do you configure an `emptyDir` volume to be backed by RAM (tmpfs) instead of node disk?",
+      "gold_answer": "Set `emptyDir.medium: \"Memory\"` on the volume.",
+      "evidence": [
+        {
+          "source": "concepts/storage/volumes.md",
+          "url": "https://kubernetes.io/docs/concepts/storage/volumes/",
+          "lines": "156-160"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "P15",
+      "category": "procedural",
+      "question": "How do you configure a StorageClass so that volume binding waits until a Pod using the PVC is actually created?",
+      "gold_answer": "Set `volumeBindingMode: WaitForFirstConsumer` on the StorageClass.",
+      "evidence": [
+        {
+          "source": "concepts/storage/storage-classes.md",
+          "url": "https://kubernetes.io/docs/concepts/storage/storage-classes/",
+          "lines": "143-156"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "P16",
+      "category": "procedural",
+      "question": "How do you check the rollout history of a Deployment from the command line?",
+      "gold_answer": "Run `kubectl rollout history deployment/<name>`.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/controllers/deployment.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/",
+          "lines": "464-466"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "P17",
+      "category": "procedural",
+      "question": "How do you pause an in-progress Deployment rollout?",
+      "gold_answer": "Run `kubectl rollout pause deployment/<name>`.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/controllers/deployment.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/",
+          "lines": "696-732"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "P18",
+      "category": "procedural",
+      "question": "How do you configure a liveness probe that checks an HTTP endpoint, waiting 10 seconds before the first check and then checking every 5 seconds?",
+      "gold_answer": "Define `livenessProbe.httpGet` with `initialDelaySeconds: 10` and `periodSeconds: 5`.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/pods/probes.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/pods/probes/",
+          "lines": "213-220"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "P19",
+      "category": "procedural",
+      "question": "How do you write a NetworkPolicy that isolates `role=db` Pods for both incoming and outgoing traffic?",
+      "gold_answer": "Create a NetworkPolicy with a `podSelector` matching `role=db` and `policyTypes` listing both `Ingress` and `Egress`.",
+      "evidence": [
+        {
+          "source": "concepts/services-networking/network-policies.md",
+          "url": "https://kubernetes.io/docs/concepts/services-networking/network-policies/",
+          "lines": "84-102"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "P20",
+      "category": "procedural",
+      "question": "How do you set a basic Pod-level security context that runs containers as a non-root user with UID 1000 and group 3000?",
+      "gold_answer": "Set `spec.securityContext.runAsUser: 1000` and `runAsGroup: 3000` (optionally `fsGroup`) in the Pod spec.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/pods/_index.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/pods/",
+          "lines": "330-344"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "C01",
+      "category": "conceptual",
+      "question": "Why does Kubernetes recommend against creating Pods directly, even for a single instance of an app?",
+      "gold_answer": "Pods are deliberately ephemeral and disposable - if a Pod dies it is not resurrected. Workload resources like Deployments add a controller that handles replication, rollout, and automatic healing on top of the Pod, which a bare Pod does not get on its own.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/pods/_index.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/pods/",
+          "lines": "56-64, 82-88"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "C02",
+      "category": "conceptual",
+      "question": "What problem do Services solve in Kubernetes?",
+      "gold_answer": "Pods are ephemeral and get replaced with new IP addresses over time, so other Pods can't reliably hold a fixed IP for them. A Service gives a changing set of Pods a single, stable way to be found and reached on the network, without frontends needing to track individual Pod IPs.",
+      "evidence": [
+        {
+          "source": "concepts/services-networking/service.md",
+          "url": "https://kubernetes.io/docs/concepts/services-networking/service/",
+          "lines": "18-24"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "C03",
+      "category": "conceptual",
+      "question": "Why does Kubernetes enforce a CPU limit via throttling rather than killing the container, unlike a memory limit?",
+      "gold_answer": "CPU is a compressible resource - a container can simply be given less CPU time without losing data, so the kernel throttles it. Memory is not compressible in the same way, so exceeding a memory limit is instead enforced with an out-of-memory (OOM) kill.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/pods/_index.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/pods/",
+          "lines": "364-366"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "C04",
+      "category": "conceptual",
+      "question": "Why might someone deliberately choose the `Recreate` Deployment strategy over the default `RollingUpdate`?",
+      "gold_answer": "`Recreate` kills all existing Pods before creating replacements, so there is guaranteed to be no period where old and new versions run simultaneously - useful when your application can't tolerate two versions running at once (e.g. due to an incompatible schema change), at the cost of downtime during the switch.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/controllers/deployment.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/",
+          "lines": "1134-1137"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "C05",
+      "category": "conceptual",
+      "question": "Why do StatefulSets require you to create a headless Service yourself?",
+      "gold_answer": "A StatefulSet needs a stable, per-Pod network identity for each replica, and a headless Service is what provides the DNS records for that identity instead of load-balancing across the Pods anonymously - Kubernetes doesn't create this Service automatically, so you're responsible for it.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/controllers/statefulset.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/",
+          "lines": "27-29"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "C06",
+      "category": "conceptual",
+      "question": "Why does Kubernetes leave a StatefulSet's PersistentVolumes intact by default when the StatefulSet is deleted or scaled down?",
+      "gold_answer": "This is a deliberate data-safety choice: automatically purging storage along with the StatefulSet risks losing data that's more valuable than the convenience of automatic cleanup, so volumes are retained unless you delete them explicitly.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/controllers/statefulset.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/",
+          "lines": "24-26"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "C07",
+      "category": "conceptual",
+      "question": "Conceptually, why would you use a startup probe instead of just setting a long `initialDelaySeconds` on the liveness probe?",
+      "gold_answer": "A fixed `initialDelaySeconds` is a static guess that either wastes time waiting when the app starts fast, or fires too early when it starts slow. A startup probe actively checks whether the app has actually finished initializing and only then lets liveness/readiness probing begin, adapting to real startup time instead of a fixed guess.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/pods/probes.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/pods/probes/",
+          "lines": "19-24"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "C08",
+      "category": "conceptual",
+      "question": "Why does the documentation say CPU limits involve a trade-off rather than being an unambiguous best practice?",
+      "gold_answer": "CPU limits prevent one workload from starving others (helpful in multi-tenant environments), but they can throttle a container even when the node has spare CPU capacity available, which can degrade latency-sensitive workloads. Whether to set them depends on the environment and workload.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/pods/_index.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/pods/",
+          "lines": "368-373"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "C09",
+      "category": "conceptual",
+      "question": "What is the conceptual difference between a Pod's `phase` and the `STATUS` column shown by `kubectl get pods`?",
+      "gold_answer": "`phase` is a small, explicit, tightly-defined part of the Kubernetes API data model (Pending/Running/Succeeded/Failed/Unknown). The `STATUS` column kubectl shows is a display convenience for humans and can show other values like `CrashLoopBackOff` or `Terminating` that aren't part of the phase enum at all.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/pods/pod-lifecycle.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/",
+          "lines": "107-112"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "C10",
+      "category": "conceptual",
+      "question": "Why can't a Pod, as Kubernetes models it, ever be \"rescheduled\" to a different node?",
+      "gold_answer": "A Pod's identity is tied to its UID, and binding happens once. If a Pod needs to run elsewhere, Kubernetes doesn't move the existing Pod object - it creates a new, near-identical replacement Pod (possibly reusing the same name but with a different UID), rather than relocating the original.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/pods/pod-lifecycle.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/",
+          "lines": "33-40, 66-69"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "C11",
+      "category": "conceptual",
+      "question": "What is the purpose of taints and tolerations as a mechanism, conceptually?",
+      "gold_answer": "They let a node repel Pods by default: a taint on a node means no Pod is scheduled there unless it explicitly tolerates that taint. This is the opposite direction from node affinity, which is a Pod attracting itself toward certain nodes.",
+      "evidence": [
+        {
+          "source": "concepts/scheduling-eviction/taint-and-toleration.md",
+          "url": "https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",
+          "lines": "21-24, 64-76"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "C12",
+      "category": "conceptual",
+      "question": "Why are Secrets modeled as a separate API object instead of just letting you put sensitive values directly in a Pod spec?",
+      "gold_answer": "Keeping Secrets independent of the Pods that use them reduces the risk of the sensitive data being exposed during the ordinary workflow of creating, viewing, and editing Pods, and lets Kubernetes and cluster components take extra precautions (like avoiding writes to nonvolatile storage) that wouldn't be possible if the data were just inline Pod fields.",
+      "evidence": [
+        {
+          "source": "concepts/configuration/secret.md",
+          "url": "https://kubernetes.io/docs/concepts/configuration/secret/",
+          "lines": "1-10"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "C13",
+      "category": "conceptual",
+      "question": "Why is kube-scheduler's node selection split into separate \"filtering\" and \"scoring\" steps instead of one step?",
+      "gold_answer": "Filtering and scoring answer two different questions: filtering finds which nodes are even feasible (hard constraints, e.g. enough resources), while scoring ranks only the nodes that survived filtering to pick the best of the feasible options. Separating them keeps a fast/simple feasibility check distinct from a more nuanced ranking decision.",
+      "evidence": [
+        {
+          "source": "concepts/scheduling-eviction/kube-scheduler.md",
+          "url": "https://kubernetes.io/docs/concepts/scheduling-eviction/kube-scheduler/",
+          "lines": "46-65"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "C14",
+      "category": "conceptual",
+      "question": "Why doesn't a failed readiness probe cause a container restart, unlike a failed liveness probe?",
+      "gold_answer": "Readiness is about whether a container is currently fit to receive traffic, not whether it's broken - a container can be temporarily unready (e.g. warming a cache) without being unhealthy. So a readiness failure only removes the Pod from Service endpoints; only a liveness failure, which signals the app is stuck, triggers a restart.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/pods/probes.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/pods/probes/",
+          "lines": "31-40, 55-70"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "C15",
+      "category": "conceptual",
+      "question": "What is the purpose of `ttlSecondsAfterFinished` on a Job, and why does the documentation recommend setting it?",
+      "gold_answer": "It lets the Job controller automatically clean up a Job (and its Pods) a set number of seconds after it finishes, instead of leaving completed Jobs around forever. It's recommended because unmanaged, un-cleaned-up Jobs otherwise accumulate indefinitely.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/controllers/job.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/job/",
+          "lines": "768, 801"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "CMP01",
+      "category": "comparison",
+      "question": "What is the key difference between a Deployment and a StatefulSet?",
+      "gold_answer": "A Deployment manages interchangeable, identical Pods with no persistent per-Pod identity - any replica can replace any other. A StatefulSet gives each Pod a stable identity (ordinal index, stable network hostname, and stable per-Pod storage) that survives rescheduling, which Deployments don't provide.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/controllers/statefulset.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/",
+          "lines": "135-141"
+        },
+        {
+          "source": "concepts/workloads/pods/_index.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/pods/",
+          "lines": "60-64"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "CMP02",
+      "category": "comparison",
+      "question": "How does a DaemonSet differ from a Deployment in terms of how many Pods it runs and where?",
+      "gold_answer": "A DaemonSet runs exactly one copy of a Pod on every (or every eligible) node, growing and shrinking automatically as nodes are added or removed. A Deployment runs a developer-specified number of replicas that the scheduler places wherever suitable, with no inherent tie to node count.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/controllers/daemonset.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/",
+          "lines": "1-3"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "CMP03",
+      "category": "comparison",
+      "question": "What's the functional difference between a Job and a CronJob?",
+      "gold_answer": "A Job runs Pods to completion a single time (or a fixed number of times). A CronJob doesn't run Pods directly - it creates Jobs on a repeating schedule, so it's a wrapper that adds time-based scheduling on top of the Job abstraction.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/controllers/job.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/job/",
+          "lines": "1-3"
+        },
+        {
+          "source": "concepts/workloads/controllers/cron-jobs.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/",
+          "lines": "105-114"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "CMP04",
+      "category": "comparison",
+      "question": "What's the difference between the `NoSchedule` and `NoExecute` taint effects?",
+      "gold_answer": "`NoSchedule` only blocks new Pods from being placed on the node - Pods already running there are left alone. `NoExecute` actively evicts Pods already running on the node (unless they tolerate the taint), in addition to blocking new ones.",
+      "evidence": [
+        {
+          "source": "concepts/scheduling-eviction/taint-and-toleration.md",
+          "url": "https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",
+          "lines": "80-94"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "CMP05",
+      "category": "comparison",
+      "question": "What's the difference between a liveness probe and a readiness probe?",
+      "gold_answer": "A liveness probe determines whether a container should be restarted (it's stuck/deadlocked). A readiness probe determines whether a container should currently receive traffic, without triggering any restart - a Pod can be alive but not ready.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/pods/probes.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/pods/probes/",
+          "lines": "31-40, 55-60"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "CMP06",
+      "category": "comparison",
+      "question": "What's the difference between a startup probe and a liveness probe?",
+      "gold_answer": "A startup probe only runs once, during container initialization, and blocks liveness/readiness checks until it succeeds. A liveness probe runs repeatedly for the container's whole life to detect if a running app has become stuck.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/pods/probes.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/pods/probes/",
+          "lines": "19-30"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "CMP07",
+      "category": "comparison",
+      "question": "What's the difference between a `ClusterIP` and a `NodePort` Service?",
+      "gold_answer": "`ClusterIP` (the default) is only reachable from inside the cluster on an internal IP. `NodePort` builds on `ClusterIP` but additionally exposes the Service on a static port on every Node's own IP, making it reachable from outside the cluster.",
+      "evidence": [
+        {
+          "source": "concepts/services-networking/service.md",
+          "url": "https://kubernetes.io/docs/concepts/services-networking/service/",
+          "lines": "373-384"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "CMP08",
+      "category": "comparison",
+      "question": "What's the difference in intended use between a ConfigMap and a Secret?",
+      "gold_answer": "Both attach configuration data to Pods independently of container images, but a ConfigMap is meant for non-confidential configuration, while a Secret is specifically intended for confidential data and gets somewhat different handling precautions, even though by default neither is encrypted at rest.",
+      "evidence": [
+        {
+          "source": "concepts/configuration/secret.md",
+          "url": "https://kubernetes.io/docs/concepts/configuration/secret/",
+          "lines": "13-14"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "CMP09",
+      "category": "comparison",
+      "question": "What's the difference between the `Retain` and `Delete` PersistentVolume reclaim policies?",
+      "gold_answer": "`Retain` keeps the PersistentVolume and its underlying storage after the claim is released, requiring manual reclamation by an administrator. `Delete` automatically removes both the PersistentVolume object and its associated backing storage when the claim is released.",
+      "evidence": [
+        {
+          "source": "concepts/storage/persistent-volumes.md",
+          "url": "https://kubernetes.io/docs/concepts/storage/persistent-volumes/",
+          "lines": "158-176"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "CMP10",
+      "category": "comparison",
+      "question": "What's the difference between `Immediate` and `WaitForFirstConsumer` volume binding modes on a StorageClass?",
+      "gold_answer": "`Immediate` (the default) provisions and binds a volume as soon as the PersistentVolumeClaim is created. `WaitForFirstConsumer` delays provisioning and binding until a Pod that uses the claim is actually created, which lets the scheduler's placement decision inform where the volume is provisioned.",
+      "evidence": [
+        {
+          "source": "concepts/storage/storage-classes.md",
+          "url": "https://kubernetes.io/docs/concepts/storage/storage-classes/",
+          "lines": "143-156"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "CMP11",
+      "category": "comparison",
+      "question": "What's the difference between `OrderedReady` and `Parallel` StatefulSet Pod management policies?",
+      "gold_answer": "`OrderedReady` (the default) launches, scales, and terminates Pods one at a time, strictly in ordinal order, waiting for each to be Running and Ready before touching the next. `Parallel` launches or terminates all Pods at once without waiting on other Pods.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/controllers/statefulset.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/",
+          "lines": "255-262"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "CMP12",
+      "category": "comparison",
+      "question": "What's the difference between a container's resource `requests` and its resource `limits`?",
+      "gold_answer": "`requests` is what the scheduler uses to decide which node has enough room to place the Pod. `limits` is a ceiling the kubelet enforces at runtime so the container can't use more than that amount - requests affect placement, limits affect runtime enforcement.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/pods/_index.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/pods/",
+          "lines": "358-362"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "CMP13",
+      "category": "comparison",
+      "question": "What's the difference between an init container and a sidecar container?",
+      "gold_answer": "Init containers run to completion, sequentially, before any app container starts, and then they're done. Sidecar containers (init containers with `restartPolicy: Always`) start before the main app container too, but keep running alongside it for the Pod's entire lifetime instead of exiting.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/pods/init-containers.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/pods/init-containers/",
+          "lines": "50-60"
+        },
+        {
+          "source": "concepts/workloads/pods/_index.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/pods/",
+          "lines": "423-436"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "CMP14",
+      "category": "comparison",
+      "question": "What's the difference between the `Recreate` and `RollingUpdate` Deployment strategies?",
+      "gold_answer": "`Recreate` terminates all existing Pods before creating any new ones, causing a gap with zero Pods running. `RollingUpdate` (the default) gradually scales down old Pods and scales up new ones together, so some capacity stays available throughout the update.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/controllers/deployment.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/",
+          "lines": "1134-1148"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "CMP15",
+      "category": "comparison",
+      "question": "What's the difference between Ingress `Prefix` and `Exact` path types?",
+      "gold_answer": "`Exact` matches the URL path exactly, case-sensitively, with no partial matches allowed. `Prefix` matches based on a `/`-split URL path prefix, so it also matches sub-paths underneath the given prefix.",
+      "evidence": [
+        {
+          "source": "concepts/services-networking/ingress.md",
+          "url": "https://kubernetes.io/docs/concepts/services-networking/ingress/",
+          "lines": "157-180"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "MD01",
+      "category": "multi_document",
+      "question": "A Deployment's Pod has `restartPolicy: Always` (the Pod-level default) and its container fails its liveness probe 3 times in a row (the default failureThreshold). What happens to the container, and does the Deployment controller need to intervene?",
+      "gold_answer": "The kubelet restarts the failed container directly, honoring the Pod's `restartPolicy`, once `failureThreshold` (default 3) consecutive failures have occurred - this is handled entirely at the container/kubelet level. The Deployment controller doesn't need to do anything; it only acts when a Pod itself needs replacing, not for in-place container restarts.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/pods/probes.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/pods/probes/",
+          "lines": "242"
+        },
+        {
+          "source": "concepts/workloads/pods/pod-lifecycle.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/",
+          "lines": "253-266"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "MD02",
+      "category": "multi_document",
+      "question": "If a StorageClass doesn't set `reclaimPolicy` at all, what reclaim policy will PersistentVolumes dynamically provisioned from it end up with?",
+      "gold_answer": "Delete. The StorageClass's `reclaimPolicy` defaults to `Delete` when unspecified, and dynamically provisioned PersistentVolumes inherit the reclaim policy of the StorageClass that provisioned them.",
+      "evidence": [
+        {
+          "source": "concepts/storage/storage-classes.md",
+          "url": "https://kubernetes.io/docs/concepts/storage/storage-classes/",
+          "lines": "104-114"
+        },
+        {
+          "source": "concepts/storage/persistent-volumes.md",
+          "url": "https://kubernetes.io/docs/concepts/storage/persistent-volumes/",
+          "lines": "174-180"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "MD03",
+      "category": "multi_document",
+      "question": "A CronJob has `concurrencyPolicy: Forbid`. If a new scheduled run's time arrives while the previous Job is still running, what happens to that run - and separately, how many times will a single Job run itself retry on failure by default?",
+      "gold_answer": "Under `Forbid`, the CronJob skips (counts as missed) the new run if the previous Job hasn't finished yet. Independently, each individual Job run retries failed Pods up to `.spec.backoffLimit` times, which defaults to 6, before that particular Job is marked failed.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/controllers/cron-jobs.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/",
+          "lines": "110-114"
+        },
+        {
+          "source": "concepts/workloads/controllers/job.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/job/",
+          "lines": "421-424"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "MD04",
+      "category": "multi_document",
+      "question": "Can a HorizontalPodAutoscaler still change a Deployment's replica count while a rolling update of that Deployment is in progress?",
+      "gold_answer": "Yes. The HorizontalPodAutoscaler only manages the Deployment's `replicas` field; the Deployment controller is separately responsible for splitting that total across the old and new ReplicaSets during the rollout, so autoscaling and rolling updates work concurrently without conflicting.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/autoscaling/horizontal-pod-autoscale.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/autoscaling/horizontal-pod-autoscale/",
+          "lines": "257-265"
+        },
+        {
+          "source": "concepts/workloads/controllers/deployment.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/",
+          "lines": "134-140"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "MD05",
+      "category": "multi_document",
+      "question": "DaemonSets are meant to run a Pod on every node, but nodes are frequently tainted (e.g. not-ready or disk-pressure). How do DaemonSet Pods still end up running on tainted nodes?",
+      "gold_answer": "The DaemonSet controller automatically adds a matching set of tolerations to DaemonSet Pods (for taints like `node.kubernetes.io/not-ready`, `disk-pressure`, `unschedulable`, etc.), so those Pods tolerate the taints that would otherwise block or evict ordinary Pods from those nodes.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/controllers/daemonset.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/",
+          "lines": "125-135"
+        },
+        {
+          "source": "concepts/scheduling-eviction/taint-and-toleration.md",
+          "url": "https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",
+          "lines": "21-24"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "MD06",
+      "category": "multi_document",
+      "question": "If a Pod's readiness probe starts failing, what immediately happens to its membership in the Services that route to it, and does the Pod get restarted as a result?",
+      "gold_answer": "The EndpointSlice controller removes the Pod's IP address from the EndpointSlices of any Service that selects it, so it stops receiving traffic through those Services. The Pod itself is not restarted - a failed readiness probe never triggers a restart, only a failed liveness probe does.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/pods/probes.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/pods/probes/",
+          "lines": "63-67"
+        },
+        {
+          "source": "concepts/services-networking/service.md",
+          "url": "https://kubernetes.io/docs/concepts/services-networking/service/",
+          "lines": "258-274"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "MD07",
+      "category": "multi_document",
+      "question": "If you update a ConfigMap that's mounted as a volume in a running Pod, will the Pod's containers see the new values without being restarted - and is the update instant?",
+      "gold_answer": "Yes, mounted ConfigMap volumes are updated without a Pod restart, but not instantly: the kubelet refreshes its cached copy on its periodic sync, so the total delay is the kubelet sync period plus the cache's propagation delay (which depends on the configured change-detection strategy).",
+      "evidence": [
+        {
+          "source": "concepts/configuration/configmap.md",
+          "url": "https://kubernetes.io/docs/concepts/configuration/configmap/",
+          "lines": "169-179"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "MD08",
+      "category": "multi_document",
+      "question": "When you update a Deployment's Pod template, does Kubernetes modify the existing ReplicaSet in place, or does something else happen?",
+      "gold_answer": "Something else: the Deployment controller creates a new ReplicaSet for the updated template and gradually shifts replicas from the old ReplicaSet to the new one (for RollingUpdate). A ReplicaSet's own job is just to keep its own fixed template's replica count correct - it isn't designed to be edited in place across template versions by the Deployment.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/controllers/deployment.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/",
+          "lines": "134-140"
+        },
+        {
+          "source": "concepts/workloads/controllers/replicaset.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/",
+          "lines": "4-17"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "MD09",
+      "category": "multi_document",
+      "question": "Why must a Job's Pod template use `restartPolicy: Never` or `OnFailure` rather than the Pod-level default of `Always`?",
+      "gold_answer": "`Always` is meant for long-running workloads that should keep running forever, which conflicts with a Job's model of Pods that run to completion a fixed number of times; Kubernetes disallows `Always` for a Job's Pod template and only permits `Never` or `OnFailure`.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/controllers/job.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/job/",
+          "lines": "188-190"
+        },
+        {
+          "source": "concepts/workloads/pods/pod-lifecycle.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/",
+          "lines": "253-255, 278-279"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "MD10",
+      "category": "multi_document",
+      "question": "If you scale a StatefulSet down from 3 replicas to 1 and then back up to 3, do the recreated Pods get their original PersistentVolumeClaims back?",
+      "gold_answer": "Yes. Scaling a StatefulSet down does not delete the PersistentVolumeClaims created from its `volumeClaimTemplates`, and each ordinal's identity (including its storage) is stable, so scaling back up reattaches the same PVC (and therefore the same underlying volume) to the Pod with that ordinal.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/controllers/statefulset.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/",
+          "lines": "24-26, 116-127"
+        },
+        {
+          "source": "concepts/storage/persistent-volumes.md",
+          "url": "https://kubernetes.io/docs/concepts/storage/persistent-volumes/",
+          "lines": "68-86"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "MD11",
+      "category": "multi_document",
+      "question": "Does creating an Ingress resource remove the need for a Service, or do the two work together?",
+      "gold_answer": "They work together. An Ingress routes external HTTP(S) traffic based on host/path rules, but its resource backends point at a Service's name and port - the Ingress doesn't replace the Service, it sits in front of one.",
+      "evidence": [
+        {
+          "source": "concepts/services-networking/ingress.md",
+          "url": "https://kubernetes.io/docs/concepts/services-networking/ingress/",
+          "lines": "119-147"
+        },
+        {
+          "source": "concepts/services-networking/service.md",
+          "url": "https://kubernetes.io/docs/concepts/services-networking/service/",
+          "lines": "26-33"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "MD12",
+      "category": "multi_document",
+      "question": "Why does the HorizontalPodAutoscaler require a container to have a CPU resource request set before it can scale on CPU utilization?",
+      "gold_answer": "CPU utilization is measured as a percentage relative to the container's requested CPU, so without a resource request there's no baseline to compute a utilization percentage from - the documentation states that if a Pod's containers don't have the relevant resource request set, CPU utilization for that Pod is undefined and the autoscaler takes no action on that metric.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/autoscaling/horizontal-pod-autoscale.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/autoscaling/horizontal-pod-autoscale/",
+          "lines": "80-83"
+        },
+        {
+          "source": "concepts/configuration/manage-resources-containers.md",
+          "url": "https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/",
+          "lines": "89-93"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "MD13",
+      "category": "multi_document",
+      "question": "Both DaemonSets and Static Pods can be used to run a Pod on every node - how does their management model fundamentally differ?",
+      "gold_answer": "A DaemonSet is a normal API-server-managed resource: the DaemonSet controller (part of the control plane) creates and tracks its Pods through the API server. A Static Pod is managed directly by the kubelet on one specific node, without the API server observing it - the kubelet itself supervises and restarts it.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/controllers/daemonset.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/",
+          "lines": "206-214"
+        },
+        {
+          "source": "concepts/workloads/pods/_index.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/pods/",
+          "lines": "380-389"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "MD14",
+      "category": "multi_document",
+      "question": "If a NetworkPolicy isolates `role=db` Pods for ingress traffic, but clients reach those Pods through a ClusterIP Service, is the policy enforced at the Service or at the Pod?",
+      "gold_answer": "At the Pod. A Service is just a stable virtual IP and routing abstraction for reaching a set of Pods - it isn't itself a security boundary. NetworkPolicy isolation rules are defined and enforced in terms of Pod selectors, regardless of whether traffic arrived via a Service.",
+      "evidence": [
+        {
+          "source": "concepts/services-networking/network-policies.md",
+          "url": "https://kubernetes.io/docs/concepts/services-networking/network-policies/",
+          "lines": "30-49"
+        },
+        {
+          "source": "concepts/services-networking/service.md",
+          "url": "https://kubernetes.io/docs/concepts/services-networking/service/",
+          "lines": "26-33"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "MD15",
+      "category": "multi_document",
+      "question": "A headless Service (used for a StatefulSet) has `.spec.type: ClusterIP` set. Given that ClusterIP is also the default Service type, what actually makes a Service \"headless\"?",
+      "gold_answer": "Setting `.spec.type: ClusterIP` is necessary but not sufficient - a Service becomes headless specifically when its `clusterIP` field is set to `None`. A headless Service gets no cluster IP allocated at all, so clients connect directly to individual Pod IPs instead of through a load-balanced virtual IP.",
+      "evidence": [
+        {
+          "source": "concepts/services-networking/service.md",
+          "url": "https://kubernetes.io/docs/concepts/services-networking/service/",
+          "lines": "778-786"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "MH01",
+      "category": "multi_hop",
+      "question": "A StatefulSet named `web` with 3 replicas uses a headless Service also named `web`, in namespace `default`. What is the fully-qualified DNS hostname of the second Pod (by creation order), and what two separate naming rules did you have to chain together to get it?",
+      "gold_answer": "`web-1.web.default.svc.cluster.local`. First, StatefulSet ordinals start at 0, so the second Pod (by order) is ordinal 1, giving Pod name `web-1` under the pattern `$(statefulset name)-$(ordinal)`. Second, that Pod name is combined with the governing headless Service's DNS pattern `<pod-hostname>.<service-name>.<namespace>.svc.cluster.local`.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/controllers/statefulset.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/",
+          "lines": "141-162"
+        },
+        {
+          "source": "concepts/services-networking/dns-pod-service.md",
+          "url": "https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/",
+          "lines": "126-136"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "hard",
+      "verified": true
+    },
+    {
+      "id": "MH02",
+      "category": "multi_hop",
+      "question": "You set a Deployment's `.spec.strategy.rollingUpdate.maxUnavailable` to 0 and leave `maxSurge` unset. What value must `maxSurge` effectively take, and what does that force about how the rolling update proceeds?",
+      "gold_answer": "`maxSurge` cannot be 0 whenever `maxUnavailable` is 0, so it falls back to its own default of 25% (it cannot also be 0). Because no existing Pods are allowed to become unavailable, the only way to make progress is to create new Pods above the desired count first and only remove old Pods once replacements are ready - a pure \"surge first\" rollout with zero downtime capacity dip.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/controllers/deployment.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/",
+          "lines": "1153-1167"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "hard",
+      "verified": true
+    },
+    {
+      "id": "MH03",
+      "category": "multi_hop",
+      "question": "A CronJob's controller goes down for 400 seconds and then comes back up, with `.spec.startingDeadlineSeconds` unset. Given the documented threshold for missed schedules, will the CronJob attempt to start the Job it missed during the outage?",
+      "gold_answer": "It depends how many schedule times were missed in that window, not just the outage length: the CronJob controller counts missed schedules since the last scheduled time, and if that count exceeds 100, it will not start the Job and logs an error instead. For a typical schedule (e.g. hourly or less frequent), 400 seconds of downtime would miss far fewer than 100 runs, so it would still start the Job; only a very high-frequency schedule missing more than 100 runs in that window would be skipped.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/controllers/cron-jobs.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/",
+          "lines": "191-212"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "hard",
+      "verified": true
+    },
+    {
+      "id": "MH04",
+      "category": "multi_hop",
+      "question": "A container defines a `startupProbe` with `failureThreshold: 30` and `periodSeconds: 10`, and no liveness probe. Roughly how much time does the application get to start before Kubernetes gives up and restarts the container?",
+      "gold_answer": "Up to about 300 seconds (5 minutes) - failureThreshold multiplied by periodSeconds (30 x 10s) gives the length of the window the startup probe allows before it's considered failed, at which point the kubelet kills the container and it is handled according to the Pod's restart policy.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/pods/probes.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/pods/probes/",
+          "lines": "19-24, 242"
+        },
+        {
+          "source": "tasks/configure-pod-container/configure-liveness-readiness-startup-probes.md",
+          "url": "https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/",
+          "lines": "242, 256-257"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "hard",
+      "verified": true
+    },
+    {
+      "id": "MH05",
+      "category": "multi_hop",
+      "question": "A Job leaves both `.spec.completions` and `.spec.parallelism` unset, and its single container fails every time it runs. Using the default `backoffLimit`, how many Pod-level failures will Kubernetes tolerate before marking the Job failed, and how many Pods run at once while it keeps retrying?",
+      "gold_answer": "6 failures are tolerated (the default `.spec.backoffLimit`) before the Job is marked failed. Because both `completions` and `parallelism` default to 1 when unset, this is a non-parallel Job, so only 1 Pod runs at a time throughout the retries.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/controllers/job.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/job/",
+          "lines": "220-221, 421-424"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "hard",
+      "verified": true
+    },
+    {
+      "id": "UNA01",
+      "category": "unanswerable",
+      "question": "What are all of the command-line flags accepted by `kube-apiserver`, and what does each one default to?",
+      "gold_answer": "Not answerable from this corpus. The full CLI flag reference lives under `content/en/docs/reference/command-line-tools-reference/`, which was excluded when this corpus was built (only concepts/, tasks/, setup/, and tutorials/ were included).",
+      "evidence": [],
+      "answerable": false,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "UNA02",
+      "category": "unanswerable",
+      "question": "What was the exact release date of Kubernetes v1.30, and who led that release cycle?",
+      "gold_answer": "Not answerable from this corpus. Version-specific release dates and release-team information live in the release notes / CHANGELOG, which aren't part of the concepts/tasks/setup/tutorials documentation subset used here.",
+      "evidence": [],
+      "answerable": false,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "UNA03",
+      "category": "unanswerable",
+      "question": "How much does a managed Kubernetes control plane cost per hour on a major cloud provider?",
+      "gold_answer": "Not answerable from this corpus. Kubernetes's own documentation doesn't cover any cloud provider's pricing - that's provider-specific commercial information outside the scope of kubernetes/website entirely.",
+      "evidence": [],
+      "answerable": false,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "UNA04",
+      "category": "unanswerable",
+      "question": "What is the complete OpenAPI schema for the `Pod` object, including every field, its JSON type, and validation rules?",
+      "gold_answer": "Not answerable from this corpus. The generated API reference lives under `content/en/docs/reference/generated/`, which was not part of the concepts/tasks/setup/tutorials sections this corpus was built from.",
+      "evidence": [],
+      "answerable": false,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "UNA05",
+      "category": "unanswerable",
+      "question": "What specific error message does kube-scheduler log when a Pod fails its filtering step due to insufficient GPU capacity on every candidate node?",
+      "gold_answer": "Not answerable from this corpus. Exact scheduler log/error message text isn't documented in the concepts or tasks pages included here - that level of detail would come from the scheduler's source code or a live cluster's logs, not the documentation.",
+      "evidence": [],
+      "answerable": false,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "OR01",
+      "category": "object_relations",
+      "question": "If you delete a Deployment using the default `kubectl delete` behavior, what happens to its ReplicaSet and Pods, and what Kubernetes mechanism makes that happen?",
+      "gold_answer": "By default Kubernetes uses background cascading deletion: the Deployment (owner) object is deleted from the API immediately, and the garbage collection controller then cleans up the dependent ReplicaSet and its Pods afterward, in the background. This works because the ReplicaSet carries an owner reference back to the Deployment, and each Pod carries an owner reference back to the ReplicaSet - the garbage collector uses these owner references, not labels, to find and delete now-ownerless dependents once the owner is gone.",
+      "evidence": [
+        {
+          "source": "concepts/architecture/garbage-collection.md",
+          "url": "https://kubernetes.io/docs/concepts/architecture/garbage-collection/",
+          "lines": "18-22, 49-56, 89-96"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "hard",
+      "verified": true
+    },
+    {
+      "id": "OR02",
+      "category": "object_relations",
+      "question": "A Service selects Pods using `app.kubernetes.io/name: MyApp` as its selector. If you relabel a running, currently-matched Pod so it no longer has that label value, does the Service keep routing traffic to it?",
+      "gold_answer": "No, once the Service's controller notices the change. Unlike a Deployment's ownership of its Pods (which uses owner references), a Service's relationship to its Pods is dynamic label matching: the controller for the Service continuously scans for Pods that match its selector and updates the Service's EndpointSlices accordingly. Once the Pod no longer matches the selector, it's dropped from the set of endpoints the Service routes to - there's no persistent binding keeping it attached.",
+      "evidence": [
+        {
+          "source": "concepts/services-networking/service.md",
+          "url": "https://kubernetes.io/docs/concepts/services-networking/service/",
+          "lines": "80-93"
+        },
+        {
+          "source": "concepts/architecture/garbage-collection.md",
+          "url": "https://kubernetes.io/docs/concepts/architecture/garbage-collection/",
+          "lines": "23-28"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "hard",
+      "verified": true
+    },
+    {
+      "id": "OR03",
+      "category": "object_relations",
+      "question": "A HorizontalPodAutoscaler targets a Deployment via `scaleTargetRef` and is actively managing its replica count. If you run `kubectl scale` on that Deployment to set a different replica count manually, what happens the next time the HPA control loop runs, and how soon does that happen by default?",
+      "gold_answer": "By default the HPA control loop runs every 15 seconds (set by the `--horizontal-pod-autoscaler-sync-period` parameter on kube-controller-manager). On its next iteration, it queries current metrics for the Pods selected by the target's `.spec.selector` and computes a desired replica count from those metrics - then sets the Deployment's replica count to that value, overwriting the manual `kubectl scale` change. The HPA doesn't track or respect a manually-set count; it always drives the target back toward what its own metric calculation says.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/autoscaling/horizontal-pod-autoscale.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/autoscaling/horizontal-pod-autoscale/",
+          "lines": "34-65"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "hard",
+      "verified": true
+    },
+    {
+      "id": "OR04",
+      "category": "object_relations",
+      "question": "A Pod has two containers consuming the same ConfigMap two different ways: one mounts it as a regular volume, the other injects it via environment variables. If you update the ConfigMap, which container(s) see the new values without the Pod being restarted?",
+      "gold_answer": "Only the container using the volume mount - and even then not instantly: volume-mounted ConfigMap keys are eventually updated, with the propagation delay depending on how the kubelet is configured to sync (watch-based by default). The container using environment variables will not see the update at all without a Pod restart - ConfigMaps consumed as environment variables are not updated automatically.",
+      "evidence": [
+        {
+          "source": "concepts/configuration/configmap.md",
+          "url": "https://kubernetes.io/docs/concepts/configuration/configmap/",
+          "lines": "171-185"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "hard",
+      "verified": true
+    },
+    {
+      "id": "OR05",
+      "category": "object_relations",
+      "question": "Two PersistentVolumeClaims could both technically match the same statically-provisioned PersistentVolume (same access mode, sufficient capacity). Once the first PVC binds to that PV, can the second PVC also bind to it?",
+      "gold_answer": "No. A PVC-to-PV binding is exclusive and one-to-one, established through a bidirectional ClaimRef once bound. The PV is then unavailable to any other PVC regardless of whether that PVC's requirements would also have matched - the second PVC simply remains unbound until a different matching PV becomes available.",
+      "evidence": [
+        {
+          "source": "concepts/storage/persistent-volumes.md",
+          "url": "https://kubernetes.io/docs/concepts/storage/persistent-volumes/",
+          "lines": "73-81"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "OR06",
+      "category": "object_relations",
+      "question": "You create a NetworkPolicy in a namespace with a `podSelector` matching Pods labeled `role=db`. Does this NetworkPolicy have any effect on a different Pod in the same namespace labeled `role=web`, which isn't selected by any NetworkPolicy?",
+      "gold_answer": "No. A Pod is only isolated (traffic-restricted) for a given direction if at least one NetworkPolicy actually selects that Pod via its podSelector and covers that direction. Since the `role=web` Pod isn't selected by this or any other NetworkPolicy, it stays non-isolated and continues to allow all inbound and outbound traffic by default - a NetworkPolicy targeting a different set of Pods elsewhere in the namespace has no implicit effect on Pods it doesn't select.",
+      "evidence": [
+        {
+          "source": "concepts/services-networking/network-policies.md",
+          "url": "https://kubernetes.io/docs/concepts/services-networking/network-policies/",
+          "lines": "30-49"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "OR07",
+      "category": "object_relations",
+      "question": "You have a standalone Pod (not created by any controller) that happens to carry labels matching an existing ReplicaSet's selector, and the Pod has no owner reference. What does the ReplicaSet do?",
+      "gold_answer": "The ReplicaSet will immediately acquire (adopt) the Pod. A ReplicaSet identifies which Pods to manage using its selector, not just Pods it created itself - if a Pod has no owner reference (or a non-controller owner reference) and its labels match the ReplicaSet's selector, the ReplicaSet treats it as one of its own and counts it toward its desired replica count.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/controllers/replicaset.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/",
+          "lines": "9-19"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "hard",
+      "verified": true
+    },
+    {
+      "id": "OR08",
+      "category": "object_relations",
+      "question": "A CronJob has been running on schedule for months without any history-limit fields set explicitly. How many completed Job objects does it keep around, and does that number differ for successful versus failed runs?",
+      "gold_answer": "Yes, it differs. By default the CronJob keeps the 3 most recent successful Jobs (`.spec.successfulJobsHistoryLimit` defaults to 3) but only the 1 most recent failed Job (`.spec.failedJobsHistoryLimit` defaults to 1). Older Jobs beyond those limits are cleaned up automatically.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/controllers/cron-jobs.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/cron-job/",
+          "lines": "134-143"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "OR09",
+      "category": "object_relations",
+      "question": "A StatefulSet uses `volumeClaimTemplates` and has never had `.spec.persistentVolumeClaimRetentionPolicy` configured. If one of its Pods fails due to a node failure and the control plane creates a replacement Pod, does that replacement get a fresh, empty PVC or the original one?",
+      "gold_answer": "The original one. The retention policy (default `Retain` for both `whenDeleted` and `whenScaled`) only governs what happens to PVCs when the StatefulSet itself is deleted or scaled down - it does not apply when a Pod is replaced due to failure. In that case the StatefulSet always retains the existing PVC and volume regardless of the configured policy, and attaches it to the new Pod on whichever node it's scheduled to.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/controllers/statefulset.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/",
+          "lines": "436-467"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "hard",
+      "verified": true
+    },
+    {
+      "id": "OR10",
+      "category": "object_relations",
+      "question": "You create an Ingress resource with a rule pointing to an existing Service via `service.name` and `service.port.number`. There is no Ingress controller running anywhere in the cluster. Will traffic be routed according to your rule?",
+      "gold_answer": "No. An Ingress resource alone has no effect - you must have a running Ingress controller to satisfy (implement) an Ingress. Creating the Ingress object just declares the desired routing rule; without a controller watching for and acting on Ingress resources, nothing actually configures a load balancer or proxy to route traffic to the referenced Service.",
+      "evidence": [
+        {
+          "source": "concepts/services-networking/ingress.md",
+          "url": "https://kubernetes.io/docs/concepts/services-networking/ingress/",
+          "lines": "48-49"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "OR11",
+      "category": "object_relations",
+      "question": "You deploy a Pod without setting `spec.serviceAccountName`, and you never explicitly created a ServiceAccount in that namespace. Does the Pod end up with no ServiceAccount identity at all?",
+      "gold_answer": "No. If you don't manually assign a ServiceAccount to a Pod, Kubernetes automatically assigns the namespace's `default` ServiceAccount to it - every namespace has one, and if you delete it, the control plane automatically replaces it with a new one. So the Pod always ends up with some ServiceAccount identity and, by default, gets a token for it, unless `automountServiceAccountToken` is explicitly set to `false`.",
+      "evidence": [
+        {
+          "source": "concepts/security/service-accounts.md",
+          "url": "https://kubernetes.io/docs/concepts/security/service-accounts/",
+          "lines": "50-56, 122-137"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "hard",
+      "verified": true
+    },
+    {
+      "id": "OR12",
+      "category": "object_relations",
+      "question": "A Pod is protected by a PodDisruptionBudget via a matching selector. Does that PDB prevent a cluster administrator from directly running `kubectl delete pod` on it?",
+      "gold_answer": "No. PodDisruptionBudgets only constrain certain voluntary disruptions that go through the eviction API (such as node drains). Directly deleting a Pod (or its Deployment) bypasses the PodDisruptionBudget entirely - the PDB has no mechanism to block a direct delete request.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/pods/disruptions.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/pods/disruptions/",
+          "lines": "48-49"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "OR13",
+      "category": "object_relations",
+      "question": "A DaemonSet is running its Pod on every Node in the cluster. One of those Nodes is removed from the cluster (e.g. decommissioned). Does the DaemonSet create a replacement Pod on a different Node to make up for it?",
+      "gold_answer": "No. A DaemonSet doesn't manage a floating replica count the way a Deployment does - it ties exactly one Pod to each matching Node. When a Node is removed, the Pod that was running on it is simply garbage collected, with no replacement created elsewhere. A new Pod only appears if/when a new Node joins the cluster that matches the DaemonSet's node selector/affinity rules.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/controllers/daemonset.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/",
+          "lines": "1-3"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "OR14",
+      "category": "object_relations",
+      "question": "You delete a DaemonSet using `kubectl delete --cascade=orphan`. What happens to the Pods it was managing, and what happens if you later create a new DaemonSet with the same selector?",
+      "gold_answer": "The Pods are left running on their nodes rather than being deleted - `--cascade=orphan` skips the normal cleanup that deleting a DaemonSet would otherwise trigger. If you subsequently create a new DaemonSet with the same selector, it adopts those existing orphaned Pods as its own rather than creating fresh ones, and will only replace any of them going forward according to its `updateStrategy`.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/controllers/daemonset.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/",
+          "lines": "179-182"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "hard",
+      "verified": true
+    },
+    {
+      "id": "OR15",
+      "category": "object_relations",
+      "question": "You delete a PriorityClass that several currently-running Pods reference by name. Does deleting it change the priority of those already-running Pods?",
+      "gold_answer": "No. Existing Pods that reference the deleted PriorityClass's name keep their priority unchanged - deleting a PriorityClass doesn't retroactively affect Pods that already used it. The only effect is forward-looking: you can no longer create new Pods that reference that PriorityClass name.",
+      "evidence": [
+        {
+          "source": "concepts/scheduling-eviction/pod-priority-preemption.md",
+          "url": "https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/",
+          "lines": "65-70"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "OR16",
+      "category": "object_relations",
+      "question": "A Service selects 150 Pods via its selector. Does Kubernetes store all 150 backing endpoints in a single object, or split them across multiple objects?",
+      "gold_answer": "It splits them. By default the control plane keeps each EndpointSlice to at most 100 endpoints, so a Service backing 150 Pods would need at least 2 EndpointSlice objects (e.g. 100 + 50) rather than one - Kubernetes adds a new, initially-empty EndpointSlice once the existing ones are full, rather than letting a single EndpointSlice grow without bound.",
+      "evidence": [
+        {
+          "source": "concepts/services-networking/endpoint-slices.md",
+          "url": "https://kubernetes.io/docs/concepts/services-networking/endpoint-slices/",
+          "lines": "36-39"
+        },
+        {
+          "source": "concepts/services-networking/service.md",
+          "url": "https://kubernetes.io/docs/concepts/services-networking/service/",
+          "lines": "260-269"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "OR17",
+      "category": "object_relations",
+      "question": "A Pod defines an init container with `restartPolicy: Always` at the container level (making it a sidecar container), and that init container has a `readinessProbe`. Does the Pod wait for this container to run to completion before starting the main app containers, the way it would for a regular init container?",
+      "gold_answer": "No. Regular init containers must run to completion before app containers start and don't support probes at all, but a sidecar container (an init container with its own `restartPolicy: Always`) is treated differently - it continues running for the Pod's whole lifetime and does support probes like `readinessProbe`. It isn't held to the \"must finish before the next stage starts\" rule that governs regular init containers.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/pods/init-containers.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/pods/init-containers/",
+          "lines": "42-47"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "hard",
+      "verified": true
+    },
+    {
+      "id": "OR18",
+      "category": "object_relations",
+      "question": "You create a Service with `type: LoadBalancer` on a cloud provider that supports external load balancers. Does Kubernetes create the cloud load balancer directly from the Service object, or is there an intermediate step?",
+      "gold_answer": "There's an intermediate step. To implement a `type: LoadBalancer` Service, Kubernetes typically first makes the same changes it would for a `type: NodePort` Service (allocating a node port), and only then does the cloud-controller-manager component configure the actual external cloud load balancer to forward traffic to that node port - the Service doesn't talk to the cloud provider's load-balancing API directly itself.",
+      "evidence": [
+        {
+          "source": "concepts/services-networking/service.md",
+          "url": "https://kubernetes.io/docs/concepts/services-networking/service/",
+          "lines": "556-559"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "hard",
+      "verified": true
+    },
+    {
+      "id": "MH06",
+      "category": "multi_hop",
+      "question": "A Pod has one container with a CPU limit of 500m and a CPU request of 250m, and no memory limit set at all. What QoS class does it get, and which Pods get evicted before it under node resource pressure?",
+      "gold_answer": "It gets QoS class `Burstable` - it doesn't meet the `Guaranteed` criteria (limit must equal request for every resource, and every resource must have both set) since its CPU limit and request differ and memory isn't set at all, but it does have at least one CPU/memory request set, which rules out `BestEffort`. Under resource pressure, Kubernetes evicts `BestEffort` Pods first, then `Burstable` Pods, and evicts `Guaranteed` Pods last - so this Pod would be evicted after any `BestEffort` Pods on the node but before any `Guaranteed` Pods.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/pods/pod-qos.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/pods/pod-qos/",
+          "lines": "20-22, 36-41, 60-62"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "hard",
+      "verified": true
+    },
+    {
+      "id": "MH07",
+      "category": "multi_hop",
+      "question": "A container's readiness probe starts failing, and you haven't customized `periodSeconds` or `failureThreshold`. Roughly how long will it take before a Service stops sending traffic to this Pod?",
+      "gold_answer": "Around 30 seconds in the worst case. With the default `periodSeconds` of 10s and default `failureThreshold` of 3, the probe needs to fail 3 times in a row before Kubernetes marks the readiness check as failed - roughly 3 x 10s = 30 seconds after the container becomes unhealthy (less if it was already partway through a period when it started failing). Once the readiness probe is considered failed, the EndpointSlice controller removes the Pod's IP address from the EndpointSlices of every Service that matches the Pod, so only then does traffic stop being routed to it.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/pods/probes.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#probes",
+          "lines": "232-242"
+        },
+        {
+          "source": "concepts/workloads/pods/pod-lifecycle.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/",
+          "lines": "797-799"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "hard",
+      "verified": true
+    },
+    {
+      "id": "MH08",
+      "category": "multi_hop",
+      "question": "A running Pod tolerates a `NoExecute` taint and its toleration specifies `tolerationSeconds: 3600`. If that taint is newly added to the Pod's node, is the Pod evicted right away?",
+      "gold_answer": "No. Pods that don't tolerate a `NoExecute` taint are evicted immediately, but this Pod does tolerate it, so it isn't. Because its toleration explicitly specifies `tolerationSeconds` (rather than omitting the field, which would mean it stays bound forever), the Pod remains bound to the node for exactly that many seconds - 3600 seconds (1 hour) - after the taint is added, and only then does the node lifecycle controller evict it.",
+      "evidence": [
+        {
+          "source": "concepts/scheduling-eviction/taint-and-toleration.md",
+          "url": "https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",
+          "lines": "80-90, 139-146"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "hard",
+      "verified": true
+    },
+    {
+      "id": "MH09",
+      "category": "multi_hop",
+      "question": "A container has a `preStop` hook that reliably takes 45 seconds to finish, and the Pod uses the default `terminationGracePeriodSeconds`. Does the hook always get to complete before the container is force-killed?",
+      "gold_answer": "No. The default `terminationGracePeriodSeconds` is 30 seconds, and the preStop hook runs within that grace period. If the hook is still running once the grace period expires, the kubelet grants only a small, one-off 2-second extension - bringing the effective limit to about 32 seconds, still short of the 45 seconds the hook needs. The container will be forcibly killed before the hook finishes unless `terminationGracePeriodSeconds` is explicitly increased to comfortably exceed 45 seconds.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/pods/pod-lifecycle.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/",
+          "lines": "864-884"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "hard",
+      "verified": true
+    },
+    {
+      "id": "MH10",
+      "category": "multi_hop",
+      "question": "A namespace has a ResourceQuota that covers CPU and memory. You deploy a Deployment whose Pod spec sets no CPU or memory requests or limits at all, and the namespace has no LimitRange. What happens when the Pods try to get created, and how would adding a LimitRange change the outcome?",
+      "gold_answer": "The Pods will likely fail admission. Once a ResourceQuota covers CPU or memory in a namespace, every new Pod must specify a request or limit for that resource, or the control plane may reject it - you'd see this as a failure surfaced via `kubectl describe` on the Deployment (e.g. its ReplicaSet failing to create Pods). Adding a LimitRange to the namespace fixes this: it can automatically inject a default request/limit onto Pods that don't specify one, satisfying the ResourceQuota's requirement so admission succeeds.",
+      "evidence": [
+        {
+          "source": "concepts/policy/resource-quotas.md",
+          "url": "https://kubernetes.io/docs/concepts/policy/resource-quotas/",
+          "lines": "48-63"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "hard",
+      "verified": true
+    },
+    {
+      "id": "MH11",
+      "category": "multi_hop",
+      "question": "A Node is configured with a soft eviction threshold for `memory.available` (grace period 2 minutes) and `eviction-max-pod-grace-period` set to 30. A Pod on that node has `terminationGracePeriodSeconds: 120`. If the soft threshold is met and held for the full 2 minutes, how long does the kubelet actually give the Pod to shut down gracefully before killing it?",
+      "gold_answer": "30 seconds, not 120. When both a maximum allowed pod grace period and a Pod's own `terminationGracePeriodSeconds` apply, the kubelet uses the lesser of the two for the eviction. Here that's `eviction-max-pod-grace-period` (30s) rather than the Pod's requested 120s, so the Pod gets far less graceful-shutdown time than its own spec asked for.",
+      "evidence": [
+        {
+          "source": "concepts/scheduling-eviction/node-pressure-eviction.md",
+          "url": "https://kubernetes.io/docs/concepts/scheduling-eviction/node-pressure-eviction/",
+          "lines": "180-199"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "hard",
+      "verified": true
+    },
+    {
+      "id": "MH12",
+      "category": "multi_hop",
+      "question": "A node is under memory pressure. Pod A has low priority but its memory usage does not exceed its request. Pod B has high priority but its memory usage does exceed its request. Which one is the kubelet more likely to evict, and why doesn't priority simply decide it?",
+      "gold_answer": "Pod B, despite its higher priority. The kubelet ranks eviction candidates by checking, first, whether the pod's usage of the starved resource exceeds its request - only pods that do are eligible at all. Priority is only used as a factor after that first filter. Since Pod A isn't exceeding its request, it won't be evicted regardless of how low its priority is; Pod B, despite being higher priority, does exceed its request and remains a valid eviction candidate.",
+      "evidence": [
+        {
+          "source": "concepts/scheduling-eviction/pod-priority-preemption.md",
+          "url": "https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/",
+          "lines": "332-345"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "hard",
+      "verified": true
+    },
+    {
+      "id": "MH13",
+      "category": "multi_hop",
+      "question": "A Pod has `restartPolicy: Never`, and one of its init containers fails during startup. Does Kubernetes retry that init container the way it normally would?",
+      "gold_answer": "No. Normally the kubelet repeatedly restarts a failing init container until it succeeds - but that behavior depends on the Pod's `restartPolicy`. With `restartPolicy: Never`, if an init container fails during startup, Kubernetes does not retry it at all and instead treats the whole Pod as failed.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/pods/init-containers.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/pods/init-containers/",
+          "lines": "23-24"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": true
+    },
+    {
+      "id": "MH14",
+      "category": "multi_hop",
+      "question": "A Deployment has `.spec.revisionHistoryLimit` set to 2, and it has since been updated 5 times. You now want to roll back to the very first revision. Will that work?",
+      "gold_answer": "No. Rollback capability depends on the old ReplicaSets being retained, since each Deployment revision's configuration is stored in its corresponding ReplicaSet - once that ReplicaSet is deleted, you lose the ability to roll back to that revision. With `revisionHistoryLimit: 2`, only the 2 most recent old ReplicaSets are kept; after 5 updates, the ReplicaSet holding the first revision has almost certainly already been cleaned up, so you can no longer roll back to it.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/controllers/deployment.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/",
+          "lines": "1294-1296"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "hard",
+      "verified": true
+    },
+    {
+      "id": "MH15",
+      "category": "multi_hop",
+      "question": "A StatefulSet has 5 replicas (ordinals 0-4) and `.spec.updateStrategy.rollingUpdate.partition` set to 3. If you update the Pod template, which Pods actually get updated?",
+      "gold_answer": "Only the Pods with an ordinal greater than or equal to the partition value - here, pod-3 and pod-4 (2 of the 5 Pods). Pods with an ordinal less than the partition (pod-0, pod-1, pod-2) are left on the old template and are not touched by the rollout, which is exactly what a partition is for: staging or canarying an update to only the highest-numbered Pods first.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/controllers/statefulset.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/",
+          "lines": "301-309"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "hard",
+      "verified": true
+    }
+  ]
+}

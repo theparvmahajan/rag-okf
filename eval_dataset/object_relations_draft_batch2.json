@@ -1,0 +1,100 @@
+{
+  "questions": [
+    {
+      "id": "OR07",
+      "category": "object_relations",
+      "question": "You have a standalone Pod (not created by any controller) that happens to carry labels matching an existing ReplicaSet's selector, and the Pod has no owner reference. What does the ReplicaSet do?",
+      "gold_answer": "The ReplicaSet will immediately acquire (adopt) the Pod. A ReplicaSet identifies which Pods to manage using its selector, not just Pods it created itself - if a Pod has no owner reference (or a non-controller owner reference) and its labels match the ReplicaSet's selector, the ReplicaSet treats it as one of its own and counts it toward its desired replica count.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/controllers/replicaset.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/",
+          "lines": "9-19"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "hard",
+      "verified": false
+    },
+    {
+      "id": "OR08",
+      "category": "object_relations",
+      "question": "A CronJob has been running on schedule for months without any history-limit fields set explicitly. How many completed Job objects does it keep around, and does that number differ for successful versus failed runs?",
+      "gold_answer": "Yes, it differs. By default the CronJob keeps the 3 most recent successful Jobs (`.spec.successfulJobsHistoryLimit` defaults to 3) but only the 1 most recent failed Job (`.spec.failedJobsHistoryLimit` defaults to 1). Older Jobs beyond those limits are cleaned up automatically.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/controllers/cron-jobs.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/cron-job/",
+          "lines": "134-143"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": false
+    },
+    {
+      "id": "OR09",
+      "category": "object_relations",
+      "question": "A StatefulSet uses `volumeClaimTemplates` and has never had `.spec.persistentVolumeClaimRetentionPolicy` configured. If one of its Pods fails due to a node failure and the control plane creates a replacement Pod, does that replacement get a fresh, empty PVC or the original one?",
+      "gold_answer": "The original one. The retention policy (default `Retain` for both `whenDeleted` and `whenScaled`) only governs what happens to PVCs when the StatefulSet itself is deleted or scaled down - it does not apply when a Pod is replaced due to failure. In that case the StatefulSet always retains the existing PVC and volume regardless of the configured policy, and attaches it to the new Pod on whichever node it's scheduled to.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/controllers/statefulset.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/",
+          "lines": "436-467"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "hard",
+      "verified": false
+    },
+    {
+      "id": "OR10",
+      "category": "object_relations",
+      "question": "You create an Ingress resource with a rule pointing to an existing Service via `service.name` and `service.port.number`. There is no Ingress controller running anywhere in the cluster. Will traffic be routed according to your rule?",
+      "gold_answer": "No. An Ingress resource alone has no effect - you must have a running Ingress controller to satisfy (implement) an Ingress. Creating the Ingress object just declares the desired routing rule; without a controller watching for and acting on Ingress resources, nothing actually configures a load balancer or proxy to route traffic to the referenced Service.",
+      "evidence": [
+        {
+          "source": "concepts/services-networking/ingress.md",
+          "url": "https://kubernetes.io/docs/concepts/services-networking/ingress/",
+          "lines": "44-47"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": false
+    },
+    {
+      "id": "OR11",
+      "category": "object_relations",
+      "question": "You deploy a Pod without setting `spec.serviceAccountName`, and you never explicitly created a ServiceAccount in that namespace. Does the Pod end up with no ServiceAccount identity at all?",
+      "gold_answer": "No. If you don't manually assign a ServiceAccount to a Pod, Kubernetes automatically assigns the namespace's `default` ServiceAccount to it - every namespace has one, and if you delete it, the control plane automatically replaces it with a new one. So the Pod always ends up with some ServiceAccount identity and, by default, gets a token for it, unless `automountServiceAccountToken` is explicitly set to `false`.",
+      "evidence": [
+        {
+          "source": "concepts/security/service-accounts.md",
+          "url": "https://kubernetes.io/docs/concepts/security/service-accounts/",
+          "lines": "50-56, 122-137"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "hard",
+      "verified": false
+    },
+    {
+      "id": "OR12",
+      "category": "object_relations",
+      "question": "A Pod is protected by a PodDisruptionBudget via a matching selector. Does that PDB prevent a cluster administrator from directly running `kubectl delete pod` on it?",
+      "gold_answer": "No. PodDisruptionBudgets only constrain certain voluntary disruptions that go through the eviction API (such as node drains). Directly deleting a Pod (or its Deployment) bypasses the PodDisruptionBudget entirely - the PDB has no mechanism to block a direct delete request.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/pods/disruptions.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/pods/disruptions/",
+          "lines": "48-49"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": false
+    }
+  ]
+}

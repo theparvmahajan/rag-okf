@@ -1,0 +1,104 @@
+{
+  "generated_at": "2026-08-20T16:36:33.648600+00:00",
+  "results_file": "eval_runs/b2_hybrid_budget1100.jsonl",
+  "overall": {
+    "k": 7,
+    "n_total": 128,
+    "n_evaluated": 123,
+    "n_skipped_unanswerable": 5,
+    "recall_at_7": 0.9268,
+    "precision_at_7": 0.5537,
+    "mrr": 0.8111
+  },
+  "by_category": {
+    "comparison": {
+      "k": 7,
+      "n_total": 15,
+      "n_evaluated": 15,
+      "n_skipped_unanswerable": 0,
+      "recall_at_7": 0.9333,
+      "precision_at_7": 0.4778,
+      "mrr": 0.6933
+    },
+    "conceptual": {
+      "k": 7,
+      "n_total": 15,
+      "n_evaluated": 15,
+      "n_skipped_unanswerable": 0,
+      "recall_at_7": 0.8667,
+      "precision_at_7": 0.4263,
+      "mrr": 0.7389
+    },
+    "factual": {
+      "k": 7,
+      "n_total": 25,
+      "n_evaluated": 25,
+      "n_skipped_unanswerable": 0,
+      "recall_at_7": 0.94,
+      "precision_at_7": 0.592,
+      "mrr": 0.86
+    },
+    "multi_document": {
+      "k": 7,
+      "n_total": 15,
+      "n_evaluated": 15,
+      "n_skipped_unanswerable": 0,
+      "recall_at_7": 0.7333,
+      "precision_at_7": 0.6978,
+      "mrr": 0.8667
+    },
+    "multi_hop": {
+      "k": 7,
+      "n_total": 15,
+      "n_evaluated": 15,
+      "n_skipped_unanswerable": 0,
+      "recall_at_7": 1.0,
+      "precision_at_7": 0.5489,
+      "mrr": 0.8356
+    },
+    "object_relations": {
+      "k": 7,
+      "n_total": 18,
+      "n_evaluated": 18,
+      "n_skipped_unanswerable": 0,
+      "recall_at_7": 0.9722,
+      "precision_at_7": 0.5944,
+      "mrr": 0.8519
+    },
+    "procedural": {
+      "k": 7,
+      "n_total": 20,
+      "n_evaluated": 20,
+      "n_skipped_unanswerable": 0,
+      "recall_at_7": 1.0,
+      "precision_at_7": 0.5169,
+      "mrr": 0.7958
+    },
+    "unanswerable": {
+      "k": 7,
+      "n_total": 5,
+      "n_evaluated": 0,
+      "n_skipped_unanswerable": 5,
+      "recall_at_7": null,
+      "precision_at_7": null,
+      "mrr": null
+    }
+  },
+  "latency_ms": {
+    "mean": 6082.4,
+    "min": 2236.88,
+    "max": 29586.24
+  },
+  "tokens": {
+    "mean_total_per_question": 1504.6,
+    "sum_total": 192593
+  },
+  "context_budget_controlled": true,
+  "context_budget_stats": {
+    "budget_tokens": 1100,
+    "avg_items_kept_per_question": 5.46,
+    "avg_tokens_used_per_question": 1013.7,
+    "n_dropped_oversized_total": 0,
+    "n_dropped_no_room_total": 3141
+  }
+}

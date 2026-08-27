@@ -1,0 +1,11 @@
+{
+  "chunk_size": 150,
+  "overlap": 30,
+  "embedding_model": "all-MiniLM-L6-v2",
+  "source_folder": "corpus_processed",
+  "source_pattern": "**/*.md",
+  "n_documents": 425,
+  "n_chunks": 4644,
+  "multi_vector_embedding": true,
+  "n_embedded_pieces": 7293
+}

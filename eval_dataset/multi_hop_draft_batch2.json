@@ -1,0 +1,73 @@
+{
+  "questions": [
+    {
+      "id": "MH06",
+      "category": "multi_hop",
+      "question": "A Pod has one container with a CPU limit of 500m and a CPU request of 250m, and no memory limit set at all. What QoS class does it get, and which Pods get evicted before it under node resource pressure?",
+      "gold_answer": "It gets QoS class `Burstable` - it doesn't meet the `Guaranteed` criteria (limit must equal request for every resource, and every resource must have both set) since its CPU limit and request differ and memory isn't set at all, but it does have at least one CPU/memory request set, which rules out `BestEffort`. Under resource pressure, Kubernetes evicts `BestEffort` Pods first, then `Burstable` Pods, and evicts `Guaranteed` Pods last - so this Pod would be evicted after any `BestEffort` Pods on the node but before any `Guaranteed` Pods.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/pods/pod-qos.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/pods/pod-qos/",
+          "lines": "20-22, 36-41, 60-62"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "hard",
+      "verified": false
+    },
+    {
+      "id": "MH07",
+      "category": "multi_hop",
+      "question": "A container's readiness probe starts failing, and you haven't customized `periodSeconds` or `failureThreshold`. Roughly how long will it take before a Service stops sending traffic to this Pod?",
+      "gold_answer": "Around 30 seconds in the worst case. With the default `periodSeconds` of 10s and default `failureThreshold` of 3, the probe needs to fail 3 times in a row before Kubernetes marks the readiness check as failed - roughly 3 x 10s = 30 seconds after the container becomes unhealthy (less if it was already partway through a period when it started failing). Once the readiness probe is considered failed, the EndpointSlice controller removes the Pod's IP address from the EndpointSlices of every Service that matches the Pod, so only then does traffic stop being routed to it.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/pods/probes.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#probes",
+          "lines": "232-242"
+        },
+        {
+          "source": "concepts/workloads/pods/pod-lifecycle.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/",
+          "lines": "797-799"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "hard",
+      "verified": false
+    },
+    {
+      "id": "MH08",
+      "category": "multi_hop",
+      "question": "A running Pod tolerates a `NoExecute` taint and its toleration specifies `tolerationSeconds: 3600`. If that taint is newly added to the Pod's node, is the Pod evicted right away?",
+      "gold_answer": "No. Pods that don't tolerate a `NoExecute` taint are evicted immediately, but this Pod does tolerate it, so it isn't. Because its toleration explicitly specifies `tolerationSeconds` (rather than omitting the field, which would mean it stays bound forever), the Pod remains bound to the node for exactly that many seconds - 3600 seconds (1 hour) - after the taint is added, and only then does the node lifecycle controller evict it.",
+      "evidence": [
+        {
+          "source": "concepts/scheduling-eviction/taint-and-toleration.md",
+          "url": "https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",
+          "lines": "80-90, 139-146"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "hard",
+      "verified": false
+    },
+    {
+      "id": "MH09",
+      "category": "multi_hop",
+      "question": "A container has a `preStop` hook that reliably takes 45 seconds to finish, and the Pod uses the default `terminationGracePeriodSeconds`. Does the hook always get to complete before the container is force-killed?",
+      "gold_answer": "No. The default `terminationGracePeriodSeconds` is 30 seconds, and the preStop hook runs within that grace period. If the hook is still running once the grace period expires, the kubelet grants only a small, one-off 2-second extension - bringing the effective limit to about 32 seconds, still short of the 45 seconds the hook needs. The container will be forcibly killed before the hook finishes unless `terminationGracePeriodSeconds` is explicitly increased to comfortably exceed 45 seconds.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/pods/pod-lifecycle.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/",
+          "lines": "864-884"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "hard",
+      "verified": false
+    }
+  ]
+}

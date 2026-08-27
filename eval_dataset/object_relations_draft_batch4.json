@@ -1,0 +1,57 @@
+{
+  "questions": [
+    {
+      "id": "OR16",
+      "category": "object_relations",
+      "question": "A Service selects 150 Pods via its selector. Does Kubernetes store all 150 backing endpoints in a single object, or split them across multiple objects?",
+      "gold_answer": "It splits them. By default the control plane keeps each EndpointSlice to at most 100 endpoints, so a Service backing 150 Pods would need at least 2 EndpointSlice objects (e.g. 100 + 50) rather than one - Kubernetes adds a new, initially-empty EndpointSlice once the existing ones are full, rather than letting a single EndpointSlice grow without bound.",
+      "evidence": [
+        {
+          "source": "concepts/services-networking/endpoint-slices.md",
+          "url": "https://kubernetes.io/docs/concepts/services-networking/endpoint-slices/",
+          "lines": "36-39"
+        },
+        {
+          "source": "concepts/services-networking/service.md",
+          "url": "https://kubernetes.io/docs/concepts/services-networking/service/",
+          "lines": "260-269"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": false
+    },
+    {
+      "id": "OR17",
+      "category": "object_relations",
+      "question": "A Pod defines an init container with `restartPolicy: Always` at the container level (making it a sidecar container), and that init container has a `readinessProbe`. Does the Pod wait for this container to run to completion before starting the main app containers, the way it would for a regular init container?",
+      "gold_answer": "No. Regular init containers must run to completion before app containers start and don't support probes at all, but a sidecar container (an init container with its own `restartPolicy: Always`) is treated differently - it continues running for the Pod's whole lifetime and does support probes like `readinessProbe`. It isn't held to the \"must finish before the next stage starts\" rule that governs regular init containers.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/pods/init-containers.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/pods/init-containers/",
+          "lines": "42-47"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "hard",
+      "verified": false
+    },
+    {
+      "id": "OR18",
+      "category": "object_relations",
+      "question": "You create a Service with `type: LoadBalancer` on a cloud provider that supports external load balancers. Does Kubernetes create the cloud load balancer directly from the Service object, or is there an intermediate step?",
+      "gold_answer": "There's an intermediate step. To implement a `type: LoadBalancer` Service, Kubernetes typically first makes the same changes it would for a `type: NodePort` Service (allocating a node port), and only then does the cloud-controller-manager component configure the actual external cloud load balancer to forward traffic to that node port - the Service doesn't talk to the cloud provider's load-balancing API directly itself.",
+      "evidence": [
+        {
+          "source": "concepts/services-networking/service.md",
+          "url": "https://kubernetes.io/docs/concepts/services-networking/service/",
+          "lines": "556-559"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "hard",
+      "verified": false
+    }
+  ]
+}

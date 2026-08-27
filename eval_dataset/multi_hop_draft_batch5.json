@@ -1,0 +1,52 @@
+{
+  "questions": [
+    {
+      "id": "MH13",
+      "category": "multi_hop",
+      "question": "A Pod has `restartPolicy: Never`, and one of its init containers fails during startup. Does Kubernetes retry that init container the way it normally would?",
+      "gold_answer": "No. Normally the kubelet repeatedly restarts a failing init container until it succeeds - but that behavior depends on the Pod's `restartPolicy`. With `restartPolicy: Never`, if an init container fails during startup, Kubernetes does not retry it at all and instead treats the whole Pod as failed.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/pods/init-containers.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/pods/init-containers/",
+          "lines": "23-24"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "medium",
+      "verified": false
+    },
+    {
+      "id": "MH14",
+      "category": "multi_hop",
+      "question": "A Deployment has `.spec.revisionHistoryLimit` set to 2, and it has since been updated 5 times. You now want to roll back to the very first revision. Will that work?",
+      "gold_answer": "No. Rollback capability depends on the old ReplicaSets being retained, since each Deployment revision's configuration is stored in its corresponding ReplicaSet - once that ReplicaSet is deleted, you lose the ability to roll back to that revision. With `revisionHistoryLimit: 2`, only the 2 most recent old ReplicaSets are kept; after 5 updates, the ReplicaSet holding the first revision has almost certainly already been cleaned up, so you can no longer roll back to it.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/controllers/deployment.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/",
+          "lines": "1294-1296"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "hard",
+      "verified": false
+    },
+    {
+      "id": "MH15",
+      "category": "multi_hop",
+      "question": "A StatefulSet has 5 replicas (ordinals 0-4) and `.spec.updateStrategy.rollingUpdate.partition` set to 3. If you update the Pod template, which Pods actually get updated?",
+      "gold_answer": "Only the Pods with an ordinal greater than or equal to the partition value - here, pod-3 and pod-4 (2 of the 5 Pods). Pods with an ordinal less than the partition (pod-0, pod-1, pod-2) are left on the old template and are not touched by the rollout, which is exactly what a partition is for: staging or canarying an update to only the highest-numbered Pods first.",
+      "evidence": [
+        {
+          "source": "concepts/workloads/controllers/statefulset.md",
+          "url": "https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/",
+          "lines": "301-309"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "hard",
+      "verified": false
+    }
+  ]
+}

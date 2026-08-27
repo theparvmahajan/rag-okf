@@ -1,0 +1,1468 @@
+---
+id: okf-structure/tasks/extend-kubernetes/custom-resources/custom-resource-definitions.md#advanced-topics
+kind: section
+title: Advanced topics
+source: tasks/extend-kubernetes/custom-resources/custom-resource-definitions.md
+url: https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/
+heading: Advanced topics
+parent: okf-structure/tasks/extend-kubernetes/custom-resources/custom-resource-definitions
+children: []
+prev_sibling: okf-structure/tasks/extend-kubernetes/custom-resources/custom-resource-definitions.md#serving-multiple-versions-of-a-crd
+next_sibling: okf-structure/tasks/extend-kubernetes/custom-resources/custom-resource-definitions.md#whatsnext
+word_count: 6801
+---
+
+### Finalizers
+
+*Finalizers* allow controllers to implement asynchronous pre-delete hooks.
+Custom objects support finalizers similar to built-in objects.
+
+You can add a finalizer to a custom object like this:
+
+```yaml
+apiVersion: "stable.example.com/v1"
+kind: CronTab
+metadata:
+  finalizers:
+  - stable.example.com/finalizer
+```
+
+Identifiers of custom finalizers consist of a domain name, a forward slash and the name of
+the finalizer. Any controller can add a finalizer to any object's list of finalizers.
+
+The first delete request on an object with finalizers sets a value for the
+`metadata.deletionTimestamp` field but does not delete it. Once this value is set,
+entries in the `finalizers` list can only be removed. While any finalizers remain it is also
+impossible to force the deletion of an object.
+
+When the `metadata.deletionTimestamp` field is set, controllers watching the object execute any
+finalizers they handle and remove the finalizer from the list after they are done. It is the
+responsibility of each controller to remove its finalizer from the list.
+
+The value of `metadata.deletionGracePeriodSeconds` controls the interval between polling updates.
+
+Once the list of finalizers is empty, meaning all finalizers have been executed, the resource is
+deleted by Kubernetes.
+
+### Validation
+
+Custom resources are validated via
+OpenAPI v3.0 schemas,
+by x-kubernetes-validations when the Validation Rules feature is enabled, and you
+can add additional validation using
+admission webhooks.
+
+Additionally, the following restrictions are applied to the schema:
+
+- These fields cannot be set:
+
+  - `definitions`,
+  - `dependencies`,
+  - `deprecated`,
+  - `discriminator`,
+  - `id`,
+  - `patternProperties`,
+  - `readOnly`,
+  - `writeOnly`,
+  - `xml`,
+  - `$ref`.
+
+- The field `uniqueItems` cannot be set to `true`.
+- The field `additionalProperties` cannot be set to `false`.
+- The field `additionalProperties` is mutually exclusive with `properties`.
+
+The `x-kubernetes-validations` extension can be used to validate custom resources using
+Common Expression Language (CEL) expressions when the
+Validation rules feature is enabled and the CustomResourceDefinition schema is a
+structural schema.
+
+Refer to the structural schemas section for other
+restrictions and CustomResourceDefinition features.
+
+The schema is defined in the CustomResourceDefinition. In the following example, the
+CustomResourceDefinition applies the following validations on the custom object:
+
+- `spec.cronSpec` must be a string and must be of the form described by the regular expression.
+- `spec.replicas` must be an integer and must have a minimum value of 1 and a maximum value of 10.
+
+Save the CustomResourceDefinition to `resourcedefinition.yaml`:
+
+```yaml
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: crontabs.stable.example.com
+spec:
+  group: stable.example.com
+  versions:
+    - name: v1
+      served: true
+      storage: true
+      schema:
+        # openAPIV3Schema is the schema for validating custom objects.
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              properties:
+                cronSpec:
+                  type: string
+                  pattern: '^(\d+|\*)(/\d+)?(\s+(\d+|\*)(/\d+)?){4}$'
+                image:
+                  type: string
+                replicas:
+                  type: integer
+                  minimum: 1
+                  maximum: 10
+  scope: Namespaced
+  names:
+    plural: crontabs
+    singular: crontab
+    kind: CronTab
+    shortNames:
+    - ct
+```
+
+and create it:
+
+```shell
+kubectl apply -f resourcedefinition.yaml
+```
+
+A request to create a custom object of kind CronTab is rejected if there are invalid values in its fields.
+In the following example, the custom object contains fields with invalid values:
+
+- `spec.cronSpec` does not match the regular expression.
+- `spec.replicas` is greater than 10.
+
+If you save the following YAML to `my-crontab.yaml`:
+
+```yaml
+apiVersion: "stable.example.com/v1"
+kind: CronTab
+metadata:
+  name: my-new-cron-object
+spec:
+  cronSpec: "* * * *"
+  image: my-awesome-cron-image
+  replicas: 15
+```
+
+and attempt to create it:
+
+```shell
+kubectl apply -f my-crontab.yaml
+```
+
+then you get an error:
+
+```console
+The CronTab "my-new-cron-object" is invalid: []: Invalid value: map[string]interface {}{"apiVersion":"stable.example.com/v1", "kind":"CronTab", "metadata":map[string]interface {}{"name":"my-new-cron-object", "namespace":"default", "deletionTimestamp":interface {}(nil), "deletionGracePeriodSeconds":(*int64)(nil), "creationTimestamp":"2017-09-05T05:20:07Z", "uid":"e14d79e7-91f9-11e7-a598-f0761cb232d1", "clusterName":""}, "spec":map[string]interface {}{"cronSpec":"* * * *", "image":"my-awesome-cron-image", "replicas":15}}:
+validation failure list:
+spec.cronSpec in body should match '^(\d+|\*)(/\d+)?(\s+(\d+|\*)(/\d+)?){4}$'
+spec.replicas in body should be less than or equal to 10
+```
+
+If the fields contain valid values, the object creation request is accepted.
+
+Save the following YAML to `my-crontab.yaml`:
+
+```yaml
+apiVersion: "stable.example.com/v1"
+kind: CronTab
+metadata:
+  name: my-new-cron-object
+spec:
+  cronSpec: "* * * * */5"
+  image: my-awesome-cron-image
+  replicas: 5
+```
+
+And create it:
+
+```shell
+kubectl apply -f my-crontab.yaml
+crontab "my-new-cron-object" created
+```
+### Validation ratcheting
+
+If you are using a version of Kubernetes older than v1.30, you need to explicitly
+enable the `CRDValidationRatcheting`
+feature gate to
+use this behavior, which then applies to all CustomResourceDefinitions in your
+cluster. 
+
+Provided you enabled the feature gate, Kubernetes implements _validation ratcheting_
+for CustomResourceDefinitions. The API server is willing to accept updates to resources that
+are not valid after the update, provided that each part of the resource that failed to validate
+was not changed by the update operation. In other words, any invalid part of the resource
+that remains invalid must have already been wrong.
+You cannot use this mechanism to update a valid resource so that it becomes invalid.
+
+This feature allows authors of CRDs to confidently add new validations to the
+OpenAPIV3 schema under certain conditions. Users can update to the new schema
+safely without bumping the version of the object or breaking workflows.
+
+While most validations placed in the OpenAPIV3 schema of a CRD support
+ratcheting, there are a few exceptions. The following OpenAPIV3 schema 
+validations are not supported by ratcheting under the implementation in Kubernetes
+ and if violated will continue to throw an error as normally:
+
+- Quantors
+  - `allOf`
+  - `oneOf`
+  - `anyOf`
+  - `not`
+  -  any validations in a descendent of one of these fields
+- `x-kubernetes-validations`
+  For Kubernetes 1.28, CRD validation rules are ignored by
+  ratcheting. Starting with Alpha 2 in Kubernetes 1.29, `x-kubernetes-validations`
+  are ratcheted only if they do not refer to `oldSelf`.
+
+  Transition Rules are never ratcheted: only errors raised by rules that do not 
+  use `oldSelf` will be automatically ratcheted if their values are unchanged.
+
+  To write custom ratcheting logic for CEL expressions, check out optionalOldSelf.
+- `x-kubernetes-list-type`
+  Errors arising from changing the list type of a subschema will not be 
+  ratcheted. For example adding `set` onto a list with duplicates will always 
+  result in an error.
+- `x-kubernetes-list-map-keys`
+  Errors arising from changing the map keys of a list schema will not be 
+  ratcheted.
+- `required`
+  Errors arising from changing the list of required fields will not be ratcheted.
+- `properties`
+  Adding/removing/modifying the names of properties is not ratcheted, but 
+  changes to validations in each properties' schemas and subschemas may be ratcheted
+  if the name of the property stays the same.
+- `additionalProperties`
+  To remove a previously specified `additionalProperties` validation will not be
+  ratcheted.
+- `metadata`
+  Errors that come from Kubernetes' built-in validation of an object's `metadata` 
+  are not ratcheted (such as object name, or characters in a label value). 
+  If you specify your own additional rules for the metadata of a custom resource, 
+  that additional validation will be ratcheted.
+
+### Validation rules
+
+Validation rules use the Common Expression Language (CEL)
+to validate custom resource values. Validation rules are included in
+CustomResourceDefinition schemas using the `x-kubernetes-validations` extension.
+
+The Rule is scoped to the location of the `x-kubernetes-validations` extension in the schema.
+And `self` variable in the CEL expression is bound to the scoped value.
+
+All validation rules are scoped to the current object: no cross-object or stateful validation
+rules are supported.
+
+For example:
+
+```yaml
+  # ...
+  openAPIV3Schema:
+    type: object
+    properties:
+      spec:
+        type: object
+        x-kubernetes-validations:
+          - rule: "self.minReplicas <= self.replicas"
+            message: "replicas should be greater than or equal to minReplicas."
+          - rule: "self.replicas <= self.maxReplicas"
+            message: "replicas should be smaller than or equal to maxReplicas."
+        properties:
+          # ...
+          minReplicas:
+            type: integer
+          replicas:
+            type: integer
+          maxReplicas:
+            type: integer
+        required:
+          - minReplicas
+          - replicas
+          - maxReplicas
+```
+
+will reject a request to create this custom resource:
+
+```yaml
+apiVersion: "stable.example.com/v1"
+kind: CronTab
+metadata:
+  name: my-new-cron-object
+spec:
+  minReplicas: 0
+  replicas: 20
+  maxReplicas: 10
+```
+
+with the response:
+
+```
+The CronTab "my-new-cron-object" is invalid:
+* spec: Invalid value: map[string]interface {}{"maxReplicas":10, "minReplicas":0, "replicas":20}: replicas should be smaller than or equal to maxReplicas.
+```
+
+`x-kubernetes-validations` could have multiple rules.
+The `rule` under `x-kubernetes-validations` represents the expression which will be evaluated by CEL.
+The `message` represents the message displayed when validation fails. If message is unset, the
+above response would be:
+
+```
+The CronTab "my-new-cron-object" is invalid:
+* spec: Invalid value: map[string]interface {}{"maxReplicas":10, "minReplicas":0, "replicas":20}: failed rule: self.replicas <= self.maxReplicas
+```
+
+You can quickly test CEL expressions in CEL Playground.
+
+Validation rules are compiled when CRDs are created/updated.
+The request of CRDs create/update will fail if compilation of validation rules fail.
+Compilation process includes type checking as well.
+
+The compilation failure:
+
+- `no_matching_overload`: this function has no overload for the types of the arguments.
+
+  For example, a rule like `self == true` against a field of integer type will get error:
+
+  ```none
+  Invalid value: apiextensions.ValidationRule{Rule:"self == true", Message:""}: compilation failed: ERROR: \<input>:1:6: found no matching overload for '_==_' applied to '(int, bool)'
+  ```
+
+- `no_such_field`: does not contain the desired field.
+
+  For example, a rule like `self.nonExistingField > 0` against a non-existing field will return
+  the following error:
+
+  ```none
+  Invalid value: apiextensions.ValidationRule{Rule:"self.nonExistingField > 0", Message:""}: compilation failed: ERROR: \<input>:1:5: undefined field 'nonExistingField'
+  ```
+
+- `invalid argument`: invalid argument to macros.
+
+  For example, a rule like `has(self)` will return error:
+
+  ```none
+  Invalid value: apiextensions.ValidationRule{Rule:"has(self)", Message:""}: compilation failed: ERROR: <input>:1:4: invalid argument to has() macro
+  ```
+
+Validation Rules Examples:
+
+| Rule                                                                             | Purpose                                                                           |
+| ----------------                                                                 | ------------                                                                      |
+| `self.minReplicas <= self.replicas && self.replicas <= self.maxReplicas`         | Validate that the three fields defining replicas are ordered appropriately        |
+| `'Available' in self.stateCounts`                                                | Validate that an entry with the 'Available' key exists in a map                   |
+| `(size(self.list1) == 0) != (size(self.list2) == 0)`                             | Validate that one of two lists is non-empty, but not both                         |
+| <code>!('MY_KEY' in self.map1) || self['MY_KEY'].matches('^[a-zA-Z]*$')</code>               | Validate the value of a map for a specific key, if it is in the map               |
+| `self.envars.filter(e, e.name == 'MY_ENV').all(e, e.value.matches('^[a-zA-Z]*$')` | Validate the 'value' field of a listMap entry where key field 'name' is 'MY_ENV'  |
+| `has(self.expired) && self.created + self.ttl < self.expired`                    | Validate that 'expired' date is after a 'create' date plus a 'ttl' duration       |
+| `self.health.startsWith('ok')`                                                   | Validate a 'health' string field has the prefix 'ok'                              |
+| `self.widgets.exists(w, w.key == 'x' && w.foo < 10)`                             | Validate that the 'foo' property of a listMap item with a key 'x' is less than 10 |
+| `type(self) == string ? self == '100%' : self == 1000`                           | Validate an int-or-string field for both the int and string cases             |
+| `self.metadata.name.startsWith(self.prefix)`                                     | Validate that an object's name has the prefix of another field value              |
+| `self.set1.all(e, !(e in self.set2))`                                            | Validate that two listSets are disjoint                                           |
+| `size(self.names) == size(self.details) && self.names.all(n, n in self.details)` | Validate the 'details' map is keyed by the items in the 'names' listSet           |
+| `size(self.clusters.filter(c, c.name == self.primary)) == 1`                     | Validate that the 'primary' property has one and only one occurrence in the 'clusters' listMap           |
+
+Xref: Supported evaluation on CEL
+
+- If the Rule is scoped to the root of a resource, it may make field selection into any fields
+  declared in the OpenAPIv3 schema of the CRD as well as `apiVersion`, `kind`, `metadata.name` and
+  `metadata.generateName`. This includes selection of fields in both the `spec` and `status` in the
+  same expression:
+
+  ```yaml
+    # ...
+    openAPIV3Schema:
+      type: object
+      x-kubernetes-validations:
+        - rule: "self.status.availableReplicas >= self.spec.minReplicas"
+      properties:
+          spec:
+            type: object
+            properties:
+              minReplicas:
+                type: integer
+              # ...
+          status:
+            type: object
+            properties:
+              availableReplicas:
+                type: integer
+  ```
+
+- If the Rule is scoped to an object with properties, the accessible properties of the object are field selectable
+  via `self.field` and field presence can be checked via `has(self.field)`. Null valued fields are treated as
+  absent fields in CEL expressions.
+
+  ```yaml
+    # ...
+    openAPIV3Schema:
+      type: object
+      properties:
+        spec:
+          type: object
+          x-kubernetes-validations:
+            - rule: "has(self.foo)"
+          properties:
+            # ...
+            foo:
+              type: integer
+  ```
+
+- If the Rule is scoped to an object with additionalProperties (i.e. a map) the value of the map
+  are accessible via `self[mapKey]`, map containment can be checked via `mapKey in self` and all
+  entries of the map are accessible via CEL macros and functions such as `self.all(...)`.
+
+  ```yaml
+    # ...
+    openAPIV3Schema:
+      type: object
+      properties:
+        spec:
+          type: object
+          x-kubernetes-validations:
+            - rule: "self['xyz'].foo > 0"
+          additionalProperties:
+            # ...
+            type: object
+            properties:
+              foo:
+                type: integer
+  ```
+
+- If the Rule is scoped to an array, the elements of the array are accessible via `self[i]` and
+  also by macros and functions.
+
+  ```yaml
+    # ...
+    openAPIV3Schema:
+      type: object
+      properties:
+        # ...
+        foo:
+          type: array
+          x-kubernetes-validations:
+            - rule: "size(self) == 1"
+          items:
+            type: string
+  ```
+
+- If the Rule is scoped to a scalar, `self` is bound to the scalar value.
+
+  ```yaml
+    # ...
+    openAPIV3Schema:
+      type: object
+      properties:
+        spec:
+          type: object
+          properties:
+            # ...
+            foo:
+              type: integer
+              x-kubernetes-validations:
+              - rule: "self > 0"
+  ```
+
+Examples:
+
+|type of the field rule scoped to    | Rule example             |
+| -----------------------| -----------------------|
+| root object            | `self.status.actual <= self.spec.maxDesired` |
+| map of objects         | `self.components['Widget'].priority < 10` |
+| list of integers       | `self.values.all(value, value >= 0 && value < 100)` |
+| string                 | `self.startsWith('kube')` |
+
+The `apiVersion`, `kind`, `metadata.name` and `metadata.generateName` are always accessible from
+the root of the object and from any `x-kubernetes-embedded-resource` annotated objects. No other
+metadata properties are accessible.
+
+Unknown data preserved in custom resources via `x-kubernetes-preserve-unknown-fields` is not
+accessible in CEL expressions. This includes:
+
+- Unknown field values that are preserved by object schemas with `x-kubernetes-preserve-unknown-fields`.
+- Object properties where the property schema is of an "unknown type". An "unknown type" is
+  recursively defined as:
+
+  - A schema with no type and x-kubernetes-preserve-unknown-fields set to true
+  - An array where the items schema is of an "unknown type"
+  - An object where the additionalProperties schema is of an "unknown type"
+
+Only property names of the form `[a-zA-Z_.-/][a-zA-Z0-9_.-/]*` are accessible.
+Accessible property names are escaped according to the following rules when accessed in the expression:
+
+| escape sequence         | property name equivalent  |
+| ----------------------- | -----------------------|
+| `__underscores__`       | `__`                  |
+| `__dot__`               | `.`                   |
+|`__dash__`               | `-`                   |
+| `__slash__`             | `/`                   |
+| `__{keyword}__`         | CEL RESERVED keyword       |
+
+Note: CEL RESERVED keyword needs to match the exact property name to be escaped (e.g. int in the word sprint would not be escaped).
+
+Examples on escaping:
+
+|property name    | rule with escaped property name     |
+| ----------------| -----------------------             |
+| namespace       | `self.__namespace__ > 0`            |
+| x-prop          | `self.x__dash__prop > 0`            |
+| redact__d       | `self.redact__underscores__d > 0`   |
+| string          | `self.startsWith('kube')`           |
+
+Equality on arrays with `x-kubernetes-list-type` of `set` or `map` ignores element order,
+i.e., `[1, 2] == [2, 1]`. Concatenation on arrays with x-kubernetes-list-type use the semantics of
+the list type:
+
+- `set`: `X + Y` performs a union where the array positions of all elements in `X` are preserved
+  and non-intersecting elements in `Y` are appended, retaining their partial order.
+
+- `map`: `X + Y` performs a merge where the array positions of all keys in `X` are preserved but
+  the values are overwritten by values in `Y` when the key sets of `X` and `Y` intersect. Elements
+  in `Y` with non-intersecting keys are appended, retaining their partial order.
+
+Here is the declarations type mapping between OpenAPIv3 and CEL type:
+
+| OpenAPIv3 type                                     | CEL type                                                                                                                     |
+| -------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| 'object' with Properties                           | object / "message type"                                                                                                      |
+| 'object' with AdditionalProperties                 | map                                                                                                                          |
+| 'object' with x-kubernetes-embedded-type           | object / "message type", 'apiVersion', 'kind', 'metadata.name' and 'metadata.generateName' are implicitly included in schema |
+| 'object' with x-kubernetes-preserve-unknown-fields | object / "message type", unknown fields are NOT accessible in CEL expression                                                 |
+| x-kubernetes-int-or-string                         | dynamic object that is either an int or a string, `type(value)` can be used to check the type                                |
+| 'array                                             | list                                                                                                                         |
+| 'array' with x-kubernetes-list-type=map            | list with map based Equality & unique key guarantees                                                                         |
+| 'array' with x-kubernetes-list-type=set            | list with set based Equality & unique entry guarantees                                                                       |
+| 'boolean'                                          | boolean                                                                                                                      |
+| 'number' (all formats)                             | double                                                                                                                       |
+| 'integer' (all formats)                            | int (64)                                                                                                                     |
+| 'null'                                             | null_type                                                                                                                    |
+| 'string'                                           | string                                                                                                                       |
+| 'string' with format=byte (base64 encoded)         | bytes                                                                                                                        |
+| 'string' with format=date                          | timestamp (google.protobuf.Timestamp)                                                                                        |
+| 'string' with format=datetime                      | timestamp (google.protobuf.Timestamp)                                                                                        |
+| 'string' with format=duration                      | duration (google.protobuf.Duration)                                                                                          |
+
+xref: CEL types,
+OpenAPI types,
+Kubernetes Structural Schemas.
+
+#### The messageExpression field
+
+Similar to the `message` field, which defines the string reported for a validation rule failure, 
+`messageExpression` allows you to use a CEL expression to construct the message string.
+This allows you to insert more descriptive information into the validation failure message. 
+`messageExpression` must evaluate a string and may use the same variables that are available to the `rule` 
+field. For example:
+
+```yaml
+x-kubernetes-validations:
+- rule: "self.x <= self.maxLimit"
+  messageExpression: '"x exceeded max limit of " + string(self.maxLimit)'
+```
+
+Keep in mind that CEL string concatenation (`+` operator) does not auto-cast to string. If
+you have a non-string scalar, use the `string(<value>)` function to cast the scalar to a string
+like shown in the above example.
+
+`messageExpression` must evaluate to a string, and this is checked while the CRD is being written. Note that it is possible
+to set `message` and `messageExpression` on the same rule, and if both are present, `messageExpression`
+will be used. However, if `messageExpression` evaluates to an error, the string defined in `message` 
+will be used instead, and the `messageExpression` error will be logged. This fallback will also occur if
+the CEL expression defined in `messageExpression` generates an empty string, or a string containing line 
+breaks.
+
+If one of the above conditions are met and no `message` has been set, then the default validation failure
+message will be used instead.
+
+`messageExpression` is a CEL expression, so the restrictions listed in Resource use by validation functions apply. If evaluation halts due to resource constraints 
+during `messageExpression` execution, then no further validation rules will be executed.
+
+Setting `messageExpression` is optional.
+
+#### The `message` field {#field-message}
+
+If you want to set a static message, you can supply `message` rather than `messageExpression`.
+The value of `message` is used as an opaque error string if validation fails.
+
+Setting `message` is optional.
+
+#### The `reason` field {#field-reason}
+
+You can add a machine-readable validation failure reason within a `validation`, to be returned
+whenever a request fails this validation rule.
+
+For example:
+
+```yaml
+x-kubernetes-validations:
+- rule: "self.x <= self.maxLimit"
+  reason: "FieldValueInvalid"
+```
+
+The HTTP status code returned to the caller will match the reason of the first failed validation rule.
+The currently supported reasons are: "FieldValueInvalid", "FieldValueForbidden", "FieldValueRequired", "FieldValueDuplicate".
+If not set or unknown reasons, default to use "FieldValueInvalid".
+
+Setting `reason` is optional.
+
+#### The `fieldPath` field {#field-field-path}
+
+You can specify the field path returned when the validation fails.
+
+For example:
+
+```yaml
+x-kubernetes-validations:
+- rule: "self.foo.test.x <= self.maxLimit"
+  fieldPath: ".foo.test.x"
+```
+
+In the example above, the validation checks the value of field `x` should be less than the value of `maxLimit`.
+If no `fieldPath` specified, when validation fails, the fieldPath would be default to wherever `self` scoped.
+With `fieldPath` specified, the returned error will have `fieldPath` properly refer to the location of field `x`.
+
+The `fieldPath` value must be a relative JSON path that is scoped to the location of this x-kubernetes-validations extension in the schema. 
+Additionally, it should refer to an existing field within the schema.
+For example when validation checks if a specific attribute `foo` under a map `testMap`, you could set
+`fieldPath` to `".testMap.foo"` or `.testMap['foo']'`.
+If the validation requires checking for unique attributes in two lists, the fieldPath can be set to either of the lists. 
+For example, it can be set to `.testList1` or `.testList2`.
+It supports child operation to refer to an existing field currently. 
+Refer to JSONPath support in Kubernetes for more info.
+The `fieldPath` field does not support indexing arrays numerically.
+
+Setting `fieldPath` is optional.
+
+#### The `optionalOldSelf` field {#field-optional-oldself}
+
+If your cluster does not have CRD validation ratcheting enabled, 
+the CustomResourceDefinition API doesn't include this field, and trying to set it may result
+in an error.
+
+The `optionalOldSelf` field is a boolean field that alters the behavior of Transition Rules described
+below. Normally, a transition rule will not evaluate if `oldSelf` cannot be determined:
+during object creation or when a new value is introduced in an update.
+
+If `optionalOldSelf` is set to true, then transition rules will always be 
+evaluated and the type of `oldSelf` be changed to a CEL `Optional` type. 
+
+`optionalOldSelf` is useful in cases where schema authors would like a more
+control tool than provided by the default equality based behavior of
+to introduce newer, usually stricter constraints on new values, while still 
+allowing old values to be "grandfathered" or ratcheted using the older validation.
+
+Example Usage:
+
+| CEL                                     | Description |
+|-----------------------------------------|-------------|
+| <code>self.foo == "foo" || (oldSelf.hasValue() && oldSelf.value().foo != "foo")</code> | Ratcheted rule. Once a value is set to "foo", it must stay foo. But if it existed before the "foo" constraint was introduced, it may use any value |
+| <code>[oldSelf.orValue(""), self].all(x, ["OldCase1", "OldCase2"].exists(case, x == case)) || ["NewCase1", "NewCase2"].exists(case, self == case) || ["NewCase"].has(self)</code> | "Ratcheted validation for removed enum cases if oldSelf used them" |
+| <code>oldSelf.optMap(o, o.size()).orValue(0) < 4 || self.size() >= 4</code> | Ratcheted validation of newly increased minimum map or list size |
+
+#### Validation functions {#available-validation-functions}
+
+Functions available include:
+
+- CEL standard functions, defined in the list of standard definitions
+- CEL standard macros
+- CEL extended string function library
+- Kubernetes CEL extension library
+
+#### Transition rules
+
+A rule that contains an expression referencing the identifier `oldSelf` is implicitly considered a
+_transition rule_. Transition rules allow schema authors to prevent certain transitions between two
+otherwise valid states. For example:
+
+```yaml
+type: string
+enum: ["low", "medium", "high"]
+x-kubernetes-validations:
+- rule: "!(self == 'high' && oldSelf == 'low') && !(self == 'low' && oldSelf == 'high')"
+  message: cannot transition directly between 'low' and 'high'
+```
+
+Unlike other rules, transition rules apply only to operations meeting the following criteria:
+
+- The operation updates an existing object. Transition rules never apply to create operations.
+
+- Both an old and a new value exist. It remains possible to check if a value has been added or
+  removed by placing a transition rule on the parent node. Transition rules are never applied to
+  custom resource creation. When placed on an optional field, a transition rule will not apply to
+  update operations that set or unset the field.
+
+- The path to the schema node being validated by a transition rule must resolve to a node that is
+  comparable between the old object and the new object. For example, list items and their
+  descendants (`spec.foo[10].bar`) can't necessarily be correlated between an existing object and a
+  later update to the same object.
+
+Errors will be generated on CRD writes if a schema node contains a transition rule that can never be
+applied, e.g. "oldSelf cannot be used on the uncorrelatable portion of the schema within *path*".
+
+Transition rules are only allowed on _correlatable portions_ of a schema.
+A portion of the schema is correlatable if all `array` parent schemas are of type `x-kubernetes-list-type=map`;
+any `set`or `atomic`array parent schemas make it impossible to unambiguously correlate a `self` with `oldSelf`.
+
+Here are some examples for transition rules:
+
+| Use Case                                                          | Rule
+| --------                                                          | --------
+| Immutability                                                      | `self.foo == oldSelf.foo`
+| Prevent modification/removal once assigned                        | `oldSelf != 'bar' \|\| self == 'bar'` or `!has(oldSelf.field) \|\| has(self.field)`
+| Append-only set                                                   | `self.all(element, element in oldSelf)`
+| If previous value was X, new value can only be A or B, not Y or Z | `oldSelf != 'X' \|\| self in ['A', 'B']`
+| Monotonic (non-decreasing) counters                               | `self >= oldSelf`
+
+#### Resource use by validation functions
+
+When you create or update a CustomResourceDefinition that uses validation rules,
+the API server checks the likely impact of running those validation rules. If a rule is
+estimated to be prohibitively expensive to execute, the API server rejects the create
+or update operation, and returns an error message.
+A similar system is used at runtime that observes the actions the interpreter takes. If the interpreter executes
+too many instructions, execution of the rule will be halted, and an error will result.
+Each CustomResourceDefinition is also allowed a certain amount of resources to finish executing all of
+its validation rules. If the sum total of its rules are estimated at creation time to go over that limit,
+then a validation error will also occur.
+
+You are unlikely to encounter issues with the resource budget for validation if you only
+specify rules that always take the same amount of time regardless of how large their input is.
+For example, a rule that asserts that `self.foo == 1` does not by itself have any
+risk of rejection on validation resource budget groups.
+But if `foo` is a string and you define a validation rule `self.foo.contains("someString")`, that rule takes
+longer to execute depending on how long `foo` is.
+Another example would be if `foo` were an array, and you specified a validation rule `self.foo.all(x, x > 5)`.
+The cost system always assumes the worst-case scenario if a limit on the length of `foo` is not
+given, and this will happen for anything that can be iterated over (lists, maps, etc.).
+
+Because of this, it is considered best practice to put a limit via `maxItems`, `maxProperties`, and
+`maxLength` for anything that will be processed in a validation rule in order to prevent validation
+errors during cost estimation. For example, given this schema with one rule:
+
+```yaml
+openAPIV3Schema:
+  type: object
+  properties:
+    foo:
+      type: array
+      items:
+        type: string
+      x-kubernetes-validations:
+        - rule: "self.all(x, x.contains('a string'))"
+```
+
+then the API server rejects this rule on validation budget grounds with error:
+
+```
+spec.validation.openAPIV3Schema.properties[spec].properties[foo].x-kubernetes-validations[0].rule: Forbidden:
+CEL rule exceeded budget by more than 100x (try simplifying the rule, or adding maxItems, maxProperties, and
+maxLength where arrays, maps, and strings are used)
+```
+
+The rejection happens because `self.all` implies calling `contains()` on every string in `foo`,
+which in turn will check the given string to see if it contains `'a string'`. Without limits, this
+is a very expensive rule.
+
+If you do not specify any validation limit, the estimated cost of this rule will exceed the
+per-rule cost limit. But if you add limits in the appropriate places, the rule will be allowed:
+
+```yaml
+openAPIV3Schema:
+  type: object
+  properties:
+    foo:
+      type: array
+      maxItems: 25
+      items:
+        type: string
+        maxLength: 10
+      x-kubernetes-validations:
+        - rule: "self.all(x, x.contains('a string'))"
+```
+
+The cost estimation system takes into account how many times the rule will be executed in addition to the
+estimated cost of the rule itself. For instance, the following rule will have the same estimated cost as the
+previous example (despite the rule now being defined on the individual array items):
+
+```yaml
+openAPIV3Schema:
+  type: object
+  properties:
+    foo:
+      type: array
+      maxItems: 25
+      items:
+        type: string
+        x-kubernetes-validations:
+          - rule: "self.contains('a string'))"
+        maxLength: 10
+```
+
+If a list inside of a list has a validation rule that uses `self.all`, that is significantly more expensive
+than a non-nested list with the same rule. A rule that would have been allowed on a non-nested list might need
+lower limits set on both nested lists in order to be allowed. For example, even without having limits set,
+the following rule is allowed:
+
+```yaml
+openAPIV3Schema:
+  type: object
+  properties:
+    foo:
+      type: array
+      items:
+        type: integer
+    x-kubernetes-validations:
+      - rule: "self.all(x, x == 5)"
+```
+
+But the same rule on the following schema (with a nested array added) produces a validation error:
+
+```yaml
+openAPIV3Schema:
+  type: object
+  properties:
+    foo:
+      type: array
+      items:
+        type: array
+        items:
+          type: integer
+        x-kubernetes-validations:
+          - rule: "self.all(x, x == 5)"
+```
+
+This is because each item of `foo` is itself an array, and each subarray in turn calls `self.all`.
+Avoid nested lists and maps if possible where validation rules are used.
+
+### Defaulting
+
+To use defaulting, your CustomResourceDefinition must use API version `apiextensions.k8s.io/v1`.
+
+Defaulting allows to specify default values in the OpenAPI v3 validation schema:
+
+```yaml
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: crontabs.stable.example.com
+spec:
+  group: stable.example.com
+  versions:
+    - name: v1
+      served: true
+      storage: true
+      schema:
+        # openAPIV3Schema is the schema for validating custom objects.
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              properties:
+                cronSpec:
+                  type: string
+                  pattern: '^(\d+|\*)(/\d+)?(\s+(\d+|\*)(/\d+)?){4}$'
+                  default: "5 0 * * *"
+                image:
+                  type: string
+                replicas:
+                  type: integer
+                  minimum: 1
+                  maximum: 10
+                  default: 1
+  scope: Namespaced
+  names:
+    plural: crontabs
+    singular: crontab
+    kind: CronTab
+    shortNames:
+    - ct
+```
+
+With this both `cronSpec` and `replicas` are defaulted:
+
+```yaml
+apiVersion: "stable.example.com/v1"
+kind: CronTab
+metadata:
+  name: my-new-cron-object
+spec:
+  image: my-awesome-cron-image
+```
+
+leads to
+
+```yaml
+apiVersion: "stable.example.com/v1"
+kind: CronTab
+metadata:
+  name: my-new-cron-object
+spec:
+  cronSpec: "5 0 * * *"
+  image: my-awesome-cron-image
+  replicas: 1
+```
+
+Defaulting happens on the object
+
+* in the request to the API server using the request version defaults,
+* when reading from etcd using the storage version defaults,
+* after mutating admission plugins with non-empty patches using the admission webhook object version defaults.
+
+Defaults applied when reading data from etcd are not automatically written back to etcd.
+An update request via the API is required to persist those defaults back into etcd.
+
+Default values for non-leaf fields must be pruned (with the exception of defaults for `metadata` fields) and must
+validate against a provided schema. For example in the above example, a default of `{"replicas": "foo", "badger": 1}`
+for the `spec` field would be invalid, because `badger` is an unknown field, and `replicas` is not a string.
+
+Default values for `metadata` fields of `x-kubernetes-embedded-resources: true` nodes (or parts of
+a default value covering `metadata`) are not pruned during CustomResourceDefinition creation, but
+through the pruning step during handling of requests.
+
+#### Defaulting and Nullable
+
+Null values for fields that either don't specify the nullable flag, or give it a
+`false` value, will be pruned before defaulting happens. If a default is present, it will be
+applied. When nullable is `true`, null values will be conserved and won't be defaulted.
+
+For example, given the OpenAPI schema below:
+
+```yaml
+type: object
+properties:
+  spec:
+    type: object
+    properties:
+      foo:
+        type: string
+        nullable: false
+        default: "default"
+      bar:
+        type: string
+        nullable: true
+      baz:
+        type: string
+```
+
+creating an object with null values for `foo` and `bar` and `baz`
+
+```yaml
+spec:
+  foo: null
+  bar: null
+  baz: null
+```
+
+leads to
+
+```yaml
+spec:
+  foo: "default"
+  bar: null
+```
+
+with `foo` pruned and defaulted because the field is non-nullable, `bar` maintaining the null
+value due to `nullable: true`, and `baz` pruned because the field is non-nullable and has no
+default.
+
+### Publish Validation Schema in OpenAPI
+
+CustomResourceDefinition OpenAPI v3 validation schemas which are
+structural and enable pruning are published
+as OpenAPI v3 and
+OpenAPI v2 from Kubernetes API server. It is recommended to use the OpenAPI v3 document
+as it is a lossless representation of the CustomResourceDefinition OpenAPI v3 validation schema
+while OpenAPI v2 represents a lossy conversion.
+
+The kubectl command-line tool consumes the published schema to perform
+client-side validation (`kubectl create` and `kubectl apply`), schema explanation (`kubectl explain`)
+on custom resources. The published schema can be consumed for other purposes as well, like client generation or documentation.
+
+#### Compatibility with OpenAPI V2
+
+For compatibility with OpenAPI V2, the OpenAPI v3 validation schema performs a lossy conversion
+to the OpenAPI v2 schema. The schema show up in `definitions` and `paths` fields in the
+OpenAPI v2 spec.
+
+The following modifications are applied during the conversion to keep backwards compatibility with
+kubectl in previous 1.13 version. These modifications prevent kubectl from being over-strict and rejecting
+valid OpenAPI schemas that it doesn't understand. The conversion won't modify the validation schema defined in CRD,
+and therefore won't affect validation in the API server.
+
+1. The following fields are removed as they aren't supported by OpenAPI v2.
+
+   - The fields `allOf`, `anyOf`, `oneOf` and `not` are removed
+
+2. If `nullable: true` is set, we drop `type`, `nullable`, `items` and `properties` because OpenAPI v2 is
+   not able to express nullable. To avoid kubectl to reject good objects, this is necessary.
+
+### Additional printer columns
+
+The kubectl tool relies on server-side output formatting. Your cluster's API server decides which
+columns are shown by the `kubectl get` command. You can customize these columns for a
+CustomResourceDefinition. The following example adds the `Spec`, `Replicas`, and `Age`
+columns.
+
+Save the CustomResourceDefinition to `resourcedefinition.yaml`:
+
+```yaml
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: crontabs.stable.example.com
+spec:
+  group: stable.example.com
+  scope: Namespaced
+  names:
+    plural: crontabs
+    singular: crontab
+    kind: CronTab
+    shortNames:
+    - ct
+  versions:
+  - name: v1
+    served: true
+    storage: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              cronSpec:
+                type: string
+              image:
+                type: string
+              replicas:
+                type: integer
+    additionalPrinterColumns:
+    - name: Spec
+      type: string
+      description: The cron spec defining the interval a CronJob is run
+      jsonPath: .spec.cronSpec
+    - name: Replicas
+      type: integer
+      description: The number of jobs launched by the CronJob
+      jsonPath: .spec.replicas
+    - name: Age
+      type: date
+      jsonPath: .metadata.creationTimestamp
+```
+
+Create the CustomResourceDefinition:
+
+```shell
+kubectl apply -f resourcedefinition.yaml
+```
+
+Create an instance using the `my-crontab.yaml` from the previous section.
+
+Invoke the server-side printing:
+
+```shell
+kubectl get crontab my-new-cron-object
+```
+
+Notice the `NAME`, `SPEC`, `REPLICAS`, and `AGE` columns in the output:
+
+```
+NAME                 SPEC        REPLICAS   AGE
+my-new-cron-object   * * * * *   1          7s
+```
+
+The `NAME` column is implicit and does not need to be defined in the CustomResourceDefinition.
+
+#### Priority
+
+Each column includes a `priority` field. Currently, the priority
+differentiates between columns shown in standard view or wide view (using the `-o wide` flag).
+
+- Columns with priority `0` are shown in standard view.
+- Columns with priority greater than `0` are shown only in wide view.
+
+#### Type
+
+A column's `type` field can be any of the following (compare
+OpenAPI v3 data types):
+
+- `integer` – non-floating-point numbers
+- `number` – floating point numbers
+- `string` – strings
+- `boolean` – `true` or `false`
+- `date` – rendered differentially as time since this timestamp.
+
+If the value inside a CustomResource does not match the type specified for the column,
+the value is omitted. Use CustomResource validation to ensure that the value
+types are correct.
+
+#### Format
+
+A column's `format` field can be any of the following:
+
+- `int32`
+- `int64`
+- `float`
+- `double`
+- `byte`
+- `date`
+- `date-time`
+- `password`
+
+The column's `format` controls the style used when `kubectl` prints the value.
+
+### Field selectors
+
+Field Selectors
+let clients select custom resources based on the value of one or more resource
+fields.
+
+All custom resources support the `metadata.name` and `metadata.namespace` field
+selectors.
+
+Fields declared in a CustomResourceDefinition
+may also be used with field selectors when included in the `spec.versions[*].selectableFields` field of the
+CustomResourceDefinition.
+
+#### Selectable fields for custom resources {#crd-selectable-fields}
+
+The `spec.versions[*].selectableFields` field of a CustomResourceDefinition may be used to
+declare which other fields in a custom resource may be used in field selectors
+with the feature of `CustomResourceFieldSelectors`
+feature gate (This feature gate is enabled by default since Kubernetes v1.31).
+The following example adds the `.spec.color` and `.spec.size` fields as
+selectable fields.
+
+Save the CustomResourceDefinition to `shirt-resource-definition.yaml`:
+
+Create the CustomResourceDefinition:
+
+```shell
+kubectl apply -f https://k8s.io/examples/customresourcedefinition/shirt-resource-definition.yaml
+```
+
+Define some Shirts by editing `shirt-resources.yaml`; for example:
+
+Create the custom resources:
+
+```shell
+kubectl apply -f https://k8s.io/examples/customresourcedefinition/shirt-resources.yaml
+```
+
+Get all the resources:
+
+```shell
+kubectl get shirts.stable.example.com
+```
+
+The output is:
+
+```
+NAME       COLOR  SIZE
+example1   blue   S
+example2   blue   M
+example3   green  M
+```
+
+Fetch blue shirts (retrieve Shirts with a `color` of `blue`):
+
+```shell
+kubectl get shirts.stable.example.com --field-selector spec.color=blue
+```
+
+Should output:
+
+```
+NAME       COLOR  SIZE
+example1   blue   S
+example2   blue   M
+```
+
+Get only resources with a `color` of `green` and a `size` of `M`:
+
+```shell
+kubectl get shirts.stable.example.com --field-selector spec.color=green,spec.size=M
+```
+
+Should output:
+
+```
+NAME       COLOR   SIZE
+example3   green   M
+```
+
+### Subresources
+
+Custom resources support `/status` and `/scale` subresources.
+
+The status and scale subresources can be optionally enabled by
+defining them in the CustomResourceDefinition.
+
+#### Status subresource
+
+When the status subresource is enabled, the `/status` subresource for the custom resource is exposed.
+
+- The status and the spec stanzas are represented by the `.status` and `.spec` JSONPaths
+  respectively inside of a custom resource.
+- `PUT` requests to the `/status` subresource take a custom resource object and ignore changes to
+  anything except the status stanza.
+- `PUT` requests to the `/status` subresource only validate the status stanza of the custom
+  resource.
+- `PUT`/`POST`/`PATCH` requests to the custom resource ignore changes to the status stanza.
+- The `.metadata.generation` value is incremented for all changes, except for changes to
+  `.metadata` or `.status`.
+- Only the following constructs are allowed at the root of the CRD OpenAPI validation schema:
+
+  - `description`
+  - `example`
+  - `exclusiveMaximum`
+  - `exclusiveMinimum`
+  - `externalDocs`
+  - `format`
+  - `items`
+  - `maximum`
+  - `maxItems`
+  - `maxLength`
+  - `minimum`
+  - `minItems`
+  - `minLength`
+  - `multipleOf`
+  - `pattern`
+  - `properties`
+  - `required`
+  - `title`
+  - `type`
+  - `uniqueItems`
+
+#### Scale subresource
+
+When the scale subresource is enabled, the `/scale` subresource for the custom resource is exposed.
+The `autoscaling/v1.Scale` object is sent as the payload for `/scale`.
+
+To enable the scale subresource, the following fields are defined in the CustomResourceDefinition.
+
+- `specReplicasPath` defines the JSONPath inside of a custom resource that corresponds to `scale.spec.replicas`.
+
+  - It is a required value.
+  - Only JSONPaths under `.spec` and with the dot notation are allowed.
+  - If there is no value under the `specReplicasPath` in the custom resource,
+    the `/scale` subresource will return an error on GET.
+
+- `statusReplicasPath` defines the JSONPath inside of a custom resource that corresponds to `scale.status.replicas`.
+
+  - It is a required value.
+  - Only JSONPaths under `.status` and with the dot notation are allowed.
+  - If there is no value under the `statusReplicasPath` in the custom resource,
+    the status replica value in the `/scale` subresource will default to 0.
+
+- `labelSelectorPath` defines the JSONPath inside of a custom resource that corresponds to
+  `Scale.Status.Selector`.
+
+  - It is an optional value.
+  - It must be set to work with HPA and VPA.
+  - Only JSONPaths under `.status` or `.spec` and with the dot notation are allowed.
+  - If there is no value under the `labelSelectorPath` in the custom resource,
+    the status selector value in the `/scale` subresource will default to the empty string.
+  - The field pointed by this JSON path must be a string field (not a complex selector struct)
+    which contains a serialized label selector in string form.
+
+In the following example, both status and scale subresources are enabled.
+
+Save the CustomResourceDefinition to `resourcedefinition.yaml`:
+
+```yaml
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: crontabs.stable.example.com
+spec:
+  group: stable.example.com
+  versions:
+    - name: v1
+      served: true
+      storage: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              properties:
+                cronSpec:
+                  type: string
+                image:
+                  type: string
+                replicas:
+                  type: integer
+            status:
+              type: object
+              properties:
+                replicas:
+                  type: integer
+                labelSelector:
+                  type: string
+      # subresources describes the subresources for custom resources.
+      subresources:
+        # status enables the status subresource.
+        status: {}
+        # scale enables the scale subresource.
+        scale:
+          # specReplicasPath defines the JSONPath inside of a custom resource that corresponds to Scale.Spec.Replicas.
+          specReplicasPath: .spec.replicas
+          # statusReplicasPath defines the JSONPath inside of a custom resource that corresponds to Scale.Status.Replicas.
+          statusReplicasPath: .status.replicas
+          # labelSelectorPath defines the JSONPath inside of a custom resource that corresponds to Scale.Status.Selector.
+          labelSelectorPath: .status.labelSelector
+  scope: Namespaced
+  names:
+    plural: crontabs
+    singular: crontab
+    kind: CronTab
+    shortNames:
+    - ct
+```
+
+And create it:
+
+```shell
+kubectl apply -f resourcedefinition.yaml
+```
+
+After the CustomResourceDefinition object has been created, you can create custom objects.
+
+If you save the following YAML to `my-crontab.yaml`:
+
+```yaml
+apiVersion: "stable.example.com/v1"
+kind: CronTab
+metadata:
+  name: my-new-cron-object
+spec:
+  cronSpec: "* * * * */5"
+  image: my-awesome-cron-image
+  replicas: 3
+```
+
+and create it:
+
+```shell
+kubectl apply -f my-crontab.yaml
+```
+
+Then new namespaced RESTful API endpoints are created at:
+
+```none
+/apis/stable.example.com/v1/namespaces/*/crontabs/status
+```
+
+and
+
+```none
+/apis/stable.example.com/v1/namespaces/*/crontabs/scale
+```
+
+A custom resource can be scaled using the `kubectl scale` command.
+For example, the following command sets `.spec.replicas` of the
+custom resource created above to 5:
+
+```shell
+kubectl scale --replicas=5 crontabs/my-new-cron-object
+crontabs "my-new-cron-object" scaled
+
+kubectl get crontabs my-new-cron-object -o jsonpath='{.spec.replicas}'
+5
+```
+
+You can use a PodDisruptionBudget to protect custom
+resources that have the scale subresource enabled.
+
+### Categories
+
+Categories is a list of grouped resources the custom resource belongs to (eg. `all`).
+You can use `kubectl get <category-name>` to list the resources belonging to the category.
+
+The following example adds `all` in the list of categories in the CustomResourceDefinition
+and illustrates how to output the custom resource using `kubectl get all`.
+
+Save the following CustomResourceDefinition to `resourcedefinition.yaml`:
+
+```yaml
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: crontabs.stable.example.com
+spec:
+  group: stable.example.com
+  versions:
+    - name: v1
+      served: true
+      storage: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              properties:
+                cronSpec:
+                  type: string
+                image:
+                  type: string
+                replicas:
+                  type: integer
+  scope: Namespaced
+  names:
+    plural: crontabs
+    singular: crontab
+    kind: CronTab
+    shortNames:
+    - ct
+    # categories is a list of grouped resources the custom resource belongs to.
+    categories:
+    - all
+```
+
+and create it:
+
+```shell
+kubectl apply -f resourcedefinition.yaml
+```
+
+After the CustomResourceDefinition object has been created, you can create custom objects.
+
+Save the following YAML to `my-crontab.yaml`:
+
+```yaml
+apiVersion: "stable.example.com/v1"
+kind: CronTab
+metadata:
+  name: my-new-cron-object
+spec:
+  cronSpec: "* * * * */5"
+  image: my-awesome-cron-image
+```
+
+and create it:
+
+```shell
+kubectl apply -f my-crontab.yaml
+```
+
+You can specify the category when using `kubectl get`:
+
+```shell
+kubectl get all
+```
+
+and it will include the custom resources of kind `CronTab`:
+
+```none
+NAME                          AGE
+crontabs/my-new-cron-object   3s
+```

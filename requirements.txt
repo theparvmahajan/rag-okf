@@ -1,0 +1,17 @@
+sentence-transformers>=3.0
+faiss-cpu>=1.8
+ollama>=0.4
+numpy>=1.26
+rank_bm25>=0.2
+PyYAML>=6.0
+
+# Ragas semantic evaluation (ragas_eval.py). Talks to the local Ollama
+# server directly via its OpenAI-compatible endpoint (uses the `openai`
+# package, already a ragas dependency) - no langchain integration needed.
+ragas>=0.4.3
+# Pin: as of ragas 0.4.3, `import ragas` unconditionally imports
+# langchain_community.chat_models.vertexai, a shim removed in
+# langchain-community 0.4.2+. 0.4.1 is the last version that still has it.
+# langchain-community itself is not otherwise used. Drop this pin once a
+# ragas release fixes the import.
+langchain-community==0.4.1

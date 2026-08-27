@@ -1,0 +1,28 @@
+---
+id: okf-structure/tasks/network/customize-hosts-file-for-pods.md#why-does-the-kubelet-manage-the-hosts-file-why-does-kubelet-manage-the-hosts-file
+kind: section
+title: Why does the kubelet manage the hosts file? {#why-does-kubelet-manage-the-hosts-file}
+source: tasks/network/customize-hosts-file-for-pods.md
+url: https://kubernetes.io/docs/tasks/network/customize-hosts-file-for-pods/
+heading: Why does the kubelet manage the hosts file? {#why-does-kubelet-manage-the-hosts-file}
+parent: okf-structure/tasks/network/customize-hosts-file-for-pods
+children: []
+prev_sibling: okf-structure/tasks/network/customize-hosts-file-for-pods.md#adding-additional-entries-with-hostaliases
+next_sibling: null
+word_count: 114
+---
+
+The kubelet manages the
+`hosts` file for each container of the Pod to prevent the container runtime from
+modifying the file after the containers have already been started.
+Historically, Kubernetes always used Docker Engine as its container runtime, and Docker Engine would
+then modify the `/etc/hosts` file after each container had started.
+
+Current Kubernetes can use a variety of container runtimes; even so, the kubelet manages the
+hosts file within each container so that the outcome is as intended regardless of which
+container runtime you use.
+
+Avoid making manual changes to the hosts file inside a container.
+
+If you make manual changes to the hosts file,
+those changes are lost when the container exits.

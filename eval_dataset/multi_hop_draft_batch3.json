@@ -1,0 +1,20 @@
+{
+  "questions": [
+    {
+      "id": "MH10",
+      "category": "multi_hop",
+      "question": "A namespace has a ResourceQuota that covers CPU and memory. You deploy a Deployment whose Pod spec sets no CPU or memory requests or limits at all, and the namespace has no LimitRange. What happens when the Pods try to get created, and how would adding a LimitRange change the outcome?",
+      "gold_answer": "The Pods will likely fail admission. Once a ResourceQuota covers CPU or memory in a namespace, every new Pod must specify a request or limit for that resource, or the control plane may reject it - you'd see this as a failure surfaced via `kubectl describe` on the Deployment (e.g. its ReplicaSet failing to create Pods). Adding a LimitRange to the namespace fixes this: it can automatically inject a default request/limit onto Pods that don't specify one, satisfying the ResourceQuota's requirement so admission succeeds.",
+      "evidence": [
+        {
+          "source": "concepts/policy/resource-quotas.md",
+          "url": "https://kubernetes.io/docs/concepts/policy/resource-quotas/",
+          "lines": "48-63"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "hard",
+      "verified": false
+    }
+  ]
+}

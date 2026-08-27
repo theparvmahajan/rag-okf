@@ -1,0 +1,361 @@
+---
+id: okf-structure/tutorials/stateful-application/basic-stateful-set.md#updating-statefulsets
+kind: section
+title: Updating StatefulSets
+source: tutorials/stateful-application/basic-stateful-set.md
+url: https://kubernetes.io/docs/tutorials/stateful-application/basic-stateful-set/
+heading: Updating StatefulSets
+parent: okf-structure/tutorials/stateful-application/basic-stateful-set
+children: []
+prev_sibling: okf-structure/tutorials/stateful-application/basic-stateful-set.md#scaling-a-statefulset
+next_sibling: okf-structure/tutorials/stateful-application/basic-stateful-set.md#deleting-statefulsets
+word_count: 1533
+---
+
+The StatefulSet controller supports automated updates.  The
+strategy used is determined by the `spec.updateStrategy` field of the
+StatefulSet API object. This feature can be used to upgrade the container
+images, resource requests and/or limits, labels, and annotations of the Pods in a
+StatefulSet.
+
+There are two valid update strategies, `RollingUpdate` (the default) and
+`OnDelete`.
+
+### RollingUpdate {#rolling-update}
+
+The `RollingUpdate` update strategy will update all Pods in a StatefulSet, in
+reverse ordinal order, while respecting the StatefulSet guarantees.
+
+You can split updates to a StatefulSet that uses the `RollingUpdate` strategy
+into _partitions_, by specifying `.spec.updateStrategy.rollingUpdate.partition`.
+You'll practice that later in this tutorial.
+
+First, try a simple rolling update.
+
+In one terminal window, patch the `web` StatefulSet to change the container
+image again:
+
+```shell
+kubectl patch statefulset web --type='json' -p='[{"op": "replace", "path": "/spec/template/spec/containers/0/image", "value":"registry.k8s.io/nginx-slim:0.24"}]'
+```
+```
+statefulset.apps/web patched
+```
+
+In another terminal, watch the Pods in the StatefulSet:
+
+```shell
+# End this watch when the rollout is complete
+#
+# If you're not sure, leave it running one more minute
+kubectl get pod -l app=nginx --watch
+```
+The output is similar to:
+```
+NAME      READY     STATUS    RESTARTS   AGE
+web-0     1/1       Running   0          7m
+web-1     1/1       Running   0          7m
+web-2     1/1       Running   0          8m
+web-2     1/1       Terminating   0         8m
+web-2     1/1       Terminating   0         8m
+web-2     0/1       Terminating   0         8m
+web-2     0/1       Terminating   0         8m
+web-2     0/1       Terminating   0         8m
+web-2     0/1       Terminating   0         8m
+web-2     0/1       Pending   0         0s
+web-2     0/1       Pending   0         0s
+web-2     0/1       ContainerCreating   0         0s
+web-2     1/1       Running   0         19s
+web-1     1/1       Terminating   0         8m
+web-1     0/1       Terminating   0         8m
+web-1     0/1       Terminating   0         8m
+web-1     0/1       Terminating   0         8m
+web-1     0/1       Pending   0         0s
+web-1     0/1       Pending   0         0s
+web-1     0/1       ContainerCreating   0         0s
+web-1     1/1       Running   0         6s
+web-0     1/1       Terminating   0         7m
+web-0     1/1       Terminating   0         7m
+web-0     0/1       Terminating   0         7m
+web-0     0/1       Terminating   0         7m
+web-0     0/1       Terminating   0         7m
+web-0     0/1       Terminating   0         7m
+web-0     0/1       Pending   0         0s
+web-0     0/1       Pending   0         0s
+web-0     0/1       ContainerCreating   0         0s
+web-0     1/1       Running   0         10s
+```
+
+The Pods in the StatefulSet are updated in reverse ordinal order. The
+StatefulSet controller terminates each Pod, and waits for it to transition to Running and
+Ready prior to updating the next Pod. Note that, even though the StatefulSet
+controller will not proceed to update the next Pod until its ordinal successor
+is Running and Ready, it will restore any Pod that fails during the update to
+that Pod's existing version.
+
+Pods that have already received the update will be restored to the updated version,
+and Pods that have not yet received the update will be restored to the previous
+version. In this way, the controller attempts to continue to keep the application
+healthy and the update consistent in the presence of intermittent failures.
+
+Get the Pods to view their container images:
+
+```shell
+for p in 0 1 2; do kubectl get pod "web-$p" --template '{{range $i, $c := .spec.containers}}{{$c.image}}{{end}}'; echo; done
+```
+```
+registry.k8s.io/nginx-slim:0.24
+registry.k8s.io/nginx-slim:0.24
+registry.k8s.io/nginx-slim:0.24
+
+```
+
+All the Pods in the StatefulSet are now running the previous container image.
+
+You can also use `kubectl rollout status sts/<name>` to view
+the status of a rolling update to a StatefulSet
+
+#### Staging an update
+
+You can split updates to a StatefulSet that uses the `RollingUpdate` strategy
+into _partitions_, by specifying `.spec.updateStrategy.rollingUpdate.partition`.
+
+For more context, you can read Partitioned rolling updates
+in the StatefulSet concept page.
+
+You can stage an update to a StatefulSet by using the `partition` field within
+`.spec.updateStrategy.rollingUpdate`.
+For this update, you will keep the existing Pods in the StatefulSet
+unchanged whilst you change the pod template for the StatefulSet.
+Then you - or, outside of a tutorial, some external automation - can
+trigger that prepared update.
+
+First, patch the `web` StatefulSet to add a partition to the `updateStrategy` field:
+
+```shell
+# The value of "partition" determines which ordinals a change applies to
+# Make sure to use a number bigger than the last ordinal for the
+# StatefulSet
+kubectl patch statefulset web -p '{"spec":{"updateStrategy":{"type":"RollingUpdate","rollingUpdate":{"partition":3}}}}'
+```
+```
+statefulset.apps/web patched
+```
+
+Patch the StatefulSet again to change the container image that this
+StatefulSet uses:
+
+```shell
+kubectl patch statefulset web --type='json' -p='[{"op": "replace", "path": "/spec/template/spec/containers/0/image", "value":"registry.k8s.io/nginx-slim:0.21"}]'
+```
+```
+statefulset.apps/web patched
+```
+
+Delete a Pod in the StatefulSet:
+
+```shell
+kubectl delete pod web-2
+```
+```
+pod "web-2" deleted
+```
+
+Wait for the replacement `web-2` Pod to be Running and Ready:
+
+```shell
+# End the watch when you see that web-2 is healthy
+kubectl get pod -l app=nginx --watch
+```
+```
+NAME      READY     STATUS              RESTARTS   AGE
+web-0     1/1       Running             0          4m
+web-1     1/1       Running             0          4m
+web-2     0/1       ContainerCreating   0          11s
+web-2     1/1       Running   0         18s
+```
+
+Get the Pod's container image:
+
+```shell
+kubectl get pod web-2 --template '{{range $i, $c := .spec.containers}}{{$c.image}}{{end}}'
+```
+```
+registry.k8s.io/nginx-slim:0.24
+```
+
+Notice that, even though the update strategy is `RollingUpdate` the StatefulSet
+restored the Pod with the original container image. This is because the
+ordinal of the Pod is less than the `partition` specified by the
+`updateStrategy`.
+
+#### Rolling out a canary
+
+You're now going to try a canary rollout
+of that staged change.
+
+You can roll out a canary (to test the modified template) by decrementing the `partition`
+you specified above.
+
+Patch the StatefulSet to decrement the partition:
+
+```shell
+# The value of "partition" should match the highest existing ordinal for
+# the StatefulSet
+kubectl patch statefulset web -p '{"spec":{"updateStrategy":{"type":"RollingUpdate","rollingUpdate":{"partition":2}}}}'
+```
+```
+statefulset.apps/web patched
+```
+
+The control plane triggers replacement for `web-2` (implemented by
+a graceful **delete** followed by creating a new Pod once the deletion
+is complete).
+Wait for the new `web-2` Pod to be Running and Ready.
+
+```shell
+# This should already be running
+kubectl get pod -l app=nginx --watch
+```
+```
+NAME      READY     STATUS              RESTARTS   AGE
+web-0     1/1       Running             0          4m
+web-1     1/1       Running             0          4m
+web-2     0/1       ContainerCreating   0          11s
+web-2     1/1       Running   0         18s
+```
+
+Get the Pod's container:
+
+```shell
+kubectl get pod web-2 --template '{{range $i, $c := .spec.containers}}{{$c.image}}{{end}}'
+```
+```
+registry.k8s.io/nginx-slim:0.21
+
+```
+
+When you changed the `partition`, the StatefulSet controller automatically
+updated the `web-2` Pod because the Pod's ordinal was greater than or equal to
+the `partition`.
+
+Delete the `web-1` Pod:
+
+```shell
+kubectl delete pod web-1
+```
+```
+pod "web-1" deleted
+```
+
+Wait for the `web-1` Pod to be Running and Ready.
+
+```shell
+# This should already be running
+kubectl get pod -l app=nginx --watch
+```
+The output is similar to:
+```
+NAME      READY     STATUS        RESTARTS   AGE
+web-0     1/1       Running       0          6m
+web-1     0/1       Terminating   0          6m
+web-2     1/1       Running       0          2m
+web-1     0/1       Terminating   0         6m
+web-1     0/1       Terminating   0         6m
+web-1     0/1       Terminating   0         6m
+web-1     0/1       Pending   0         0s
+web-1     0/1       Pending   0         0s
+web-1     0/1       ContainerCreating   0         0s
+web-1     1/1       Running   0         18s
+```
+
+Get the `web-1` Pod's container image:
+
+```shell
+kubectl get pod web-1 --template '{{range $i, $c := .spec.containers}}{{$c.image}}{{end}}'
+```
+```
+registry.k8s.io/nginx-slim:0.24
+```
+
+`web-1` was restored to its original configuration because the Pod's ordinal
+was less than the partition. When a partition is specified, all Pods with an
+ordinal that is greater than or equal to the partition will be updated when the
+StatefulSet's `.spec.template` is updated. If a Pod that has an ordinal less
+than the partition is deleted or otherwise terminated, it will be restored to
+its original configuration.
+
+#### Phased roll outs
+
+You can perform a phased roll out (e.g. a linear, geometric, or exponential
+roll out) using a partitioned rolling update in a similar manner to how you
+rolled out a canary. To perform a phased roll out, set
+the `partition` to the ordinal at which you want the controller to pause the
+update.
+
+The partition is currently set to `2`. Set the partition to `0`:
+
+```shell
+kubectl patch statefulset web -p '{"spec":{"updateStrategy":{"type":"RollingUpdate","rollingUpdate":{"partition":0}}}}'
+```
+```
+statefulset.apps/web patched
+```
+
+Wait for all of the Pods in the StatefulSet to become Running and Ready.
+
+```shell
+# This should already be running
+kubectl get pod -l app=nginx --watch
+```
+The output is similar to:
+```
+NAME      READY     STATUS              RESTARTS   AGE
+web-0     1/1       Running             0          3m
+web-1     0/1       ContainerCreating   0          11s
+web-2     1/1       Running             0          2m
+web-1     1/1       Running   0         18s
+web-0     1/1       Terminating   0         3m
+web-0     1/1       Terminating   0         3m
+web-0     0/1       Terminating   0         3m
+web-0     0/1       Terminating   0         3m
+web-0     0/1       Terminating   0         3m
+web-0     0/1       Terminating   0         3m
+web-0     0/1       Pending   0         0s
+web-0     0/1       Pending   0         0s
+web-0     0/1       ContainerCreating   0         0s
+web-0     1/1       Running   0         3s
+```
+
+Get the container image details for the Pods in the StatefulSet:
+
+```shell
+for p in 0 1 2; do kubectl get pod "web-$p" --template '{{range $i, $c := .spec.containers}}{{$c.image}}{{end}}'; echo; done
+```
+```
+registry.k8s.io/nginx-slim:0.21
+registry.k8s.io/nginx-slim:0.21
+registry.k8s.io/nginx-slim:0.21
+```
+
+By moving the `partition` to `0`, you allowed the StatefulSet to
+continue the update process.
+
+### OnDelete {#on-delete}
+
+You select this update strategy for a StatefulSet by setting the
+`.spec.updateStrategy.type` to `OnDelete`.
+
+Patch the `web` StatefulSet to use the `OnDelete` update strategy:
+
+```shell
+kubectl patch statefulset web -p '{"spec":{"updateStrategy":{"type":"OnDelete", "rollingUpdate": null}}}'
+```
+```
+statefulset.apps/web patched
+```
+
+When you select this update strategy, the StatefulSet controller does not
+automatically update Pods when a modification is made to the StatefulSet's
+`.spec.template` field. You need to manage the rollout yourself - either
+manually, or using separate automation.

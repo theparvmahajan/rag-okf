@@ -1,0 +1,63 @@
+---
+id: okf-structure/tasks/debug/debug-application/debug-service.md#is-the-service-defined-correctly
+kind: section
+title: Is the Service defined correctly?
+source: tasks/debug/debug-application/debug-service.md
+url: https://kubernetes.io/docs/tasks/debug/debug-application/debug-service/
+heading: Is the Service defined correctly?
+parent: okf-structure/tasks/debug/debug-application/debug-service
+children: []
+prev_sibling: okf-structure/tasks/debug/debug-application/debug-service.md#does-the-service-work-by-ip
+next_sibling: okf-structure/tasks/debug/debug-application/debug-service.md#does-the-service-have-any-endpointslices
+word_count: 173
+---
+
+It might sound silly, but you should really double and triple check that your
+Service is correct and matches your Pod's port.  Read back your Service
+and verify it:
+
+```shell
+kubectl get service hostnames -o json
+```
+```json
+{
+    "kind": "Service",
+    "apiVersion": "v1",
+    "metadata": {
+        "name": "hostnames",
+        "namespace": "default",
+        "uid": "428c8b6c-24bc-11e5-936d-42010af0a9bc",
+        "resourceVersion": "347189",
+        "creationTimestamp": "2015-07-07T15:24:29Z",
+        "labels": {
+            "app": "hostnames"
+        }
+    },
+    "spec": {
+        "ports": [
+            {
+                "name": "default",
+                "protocol": "TCP",
+                "port": 80,
+                "targetPort": 9376,
+                "nodePort": 0
+            }
+        ],
+        "selector": {
+            "app": "hostnames"
+        },
+        "clusterIP": "10.0.1.175",
+        "type": "ClusterIP",
+        "sessionAffinity": "None"
+    },
+    "status": {
+        "loadBalancer": {}
+    }
+}
+```
+
+* Is the Service port you are trying to access listed in `spec.ports[]`?
+* Is the `targetPort` correct for your Pods (some Pods use a different port than the Service)?
+* If you meant to use a numeric port, is it a number (9376) or a string "9376"?
+* If you meant to use a named port, do your Pods expose a port with the same name?
+* Is the port's `protocol` correct for your Pods?

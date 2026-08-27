@@ -1,0 +1,65 @@
+{
+  "generated_at": "2026-08-21T19:36:44.442097+00:00",
+  "results_file": "/kaggle/working/ragas_eval_project/s4_okf_relations_dense_budget1100.jsonl",
+  "judge_model": "qwen2.5:7b",
+  "n_scored": 122,
+  "n_judge_errors": 1,
+  "n_skipped": 5,
+  "overall": {
+    "faithfulness": 0.5873,
+    "factual_correctness": 0.3255,
+    "context_precision": 0.5017,
+    "context_recall": 0.5546
+  },
+  "by_category": {
+    "comparison": {
+      "n": 15,
+      "faithfulness": 0.7782,
+      "factual_correctness": 0.378,
+      "context_precision": 0.4556,
+      "context_recall": 0.6333
+    },
+    "conceptual": {
+      "n": 15,
+      "faithfulness": 0.5683,
+      "factual_correctness": 0.2407,
+      "context_precision": 0.3667,
+      "context_recall": 0.5333
+    },
+    "factual": {
+      "n": 25,
+      "faithfulness": 0.592,
+      "factual_correctness": 0.2396,
+      "context_precision": 0.2933,
+      "context_recall": 0.32
+    },
+    "multi_document": {
+      "n": 15,
+      "faithfulness": 0.7033,
+      "factual_correctness": 0.4933,
+      "context_precision": 0.7278,
+      "context_recall": 0.8667
+    },
+    "multi_hop": {
+      "n": 14,
+      "faithfulness": 0.4717,
+      "factual_correctness": 0.3314,
+      "context_precision": 0.5417,
+      "context_recall": 0.6429
+    },
+    "object_relations": {
+      "n": 18,
+      "faithfulness": 0.5458,
+      "factual_correctness": 0.4461,
+      "context_precision": 0.8864,
+      "context_recall": 0.6759
+    },
+    "procedural": {
+      "n": 20,
+      "faithfulness": 0.4837,
+      "factual_correctness": 0.2185,
+      "context_precision": 0.3542,
+      "context_recall": 0.4
+    }
+  }
+}

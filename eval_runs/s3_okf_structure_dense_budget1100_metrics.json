@@ -1,0 +1,104 @@
+{
+  "generated_at": "2026-08-20T15:32:27.904910+00:00",
+  "results_file": "eval_runs/s3_okf_structure_dense_budget1100.jsonl",
+  "overall": {
+    "k": 14,
+    "n_total": 128,
+    "n_evaluated": 123,
+    "n_skipped_unanswerable": 5,
+    "recall_at_14": 0.7927,
+    "precision_at_14": 0.289,
+    "mrr": 0.6344
+  },
+  "by_category": {
+    "comparison": {
+      "k": 14,
+      "n_total": 15,
+      "n_evaluated": 15,
+      "n_skipped_unanswerable": 0,
+      "recall_at_14": 0.6333,
+      "precision_at_14": 0.3053,
+      "mrr": 0.5889
+    },
+    "conceptual": {
+      "k": 14,
+      "n_total": 15,
+      "n_evaluated": 15,
+      "n_skipped_unanswerable": 0,
+      "recall_at_14": 1.0,
+      "precision_at_14": 0.2955,
+      "mrr": 0.85
+    },
+    "factual": {
+      "k": 14,
+      "n_total": 25,
+      "n_evaluated": 25,
+      "n_skipped_unanswerable": 0,
+      "recall_at_14": 0.76,
+      "precision_at_14": 0.2378,
+      "mrr": 0.5717
+    },
+    "multi_document": {
+      "k": 14,
+      "n_total": 15,
+      "n_evaluated": 15,
+      "n_skipped_unanswerable": 0,
+      "recall_at_14": 0.6,
+      "precision_at_14": 0.3433,
+      "mrr": 0.6222
+    },
+    "multi_hop": {
+      "k": 14,
+      "n_total": 15,
+      "n_evaluated": 15,
+      "n_skipped_unanswerable": 0,
+      "recall_at_14": 0.8667,
+      "precision_at_14": 0.3505,
+      "mrr": 0.7583
+    },
+    "object_relations": {
+      "k": 14,
+      "n_total": 18,
+      "n_evaluated": 18,
+      "n_skipped_unanswerable": 0,
+      "recall_at_14": 0.7778,
+      "precision_at_14": 0.3031,
+      "mrr": 0.6065
+    },
+    "procedural": {
+      "k": 14,
+      "n_total": 20,
+      "n_evaluated": 20,
+      "n_skipped_unanswerable": 0,
+      "recall_at_14": 0.9,
+      "precision_at_14": 0.2367,
+      "mrr": 0.5264
+    },
+    "unanswerable": {
+      "k": 14,
+      "n_total": 5,
+      "n_evaluated": 0,
+      "n_skipped_unanswerable": 5,
+      "recall_at_14": null,
+      "precision_at_14": null,
+      "mrr": null
+    }
+  },
+  "latency_ms": {
+    "mean": 5904.74,
+    "min": 2083.0,
+    "max": 22523.25
+  },
+  "tokens": {
+    "mean_total_per_question": 1703.4,
+    "sum_total": 218037
+  },
+  "context_budget_controlled": true,
+  "context_budget_stats": {
+    "budget_tokens": 1100,
+    "avg_items_kept_per_question": 5.98,
+    "avg_tokens_used_per_question": 1084.4,
+    "n_dropped_oversized_total": 565,
+    "n_dropped_no_room_total": 2509
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "questions": [
+    {
+      "id": "MH11",
+      "category": "multi_hop",
+      "question": "A Node is configured with a soft eviction threshold for `memory.available` (grace period 2 minutes) and `eviction-max-pod-grace-period` set to 30. A Pod on that node has `terminationGracePeriodSeconds: 120`. If the soft threshold is met and held for the full 2 minutes, how long does the kubelet actually give the Pod to shut down gracefully before killing it?",
+      "gold_answer": "30 seconds, not 120. When both a maximum allowed pod grace period and a Pod's own `terminationGracePeriodSeconds` apply, the kubelet uses the lesser of the two for the eviction. Here that's `eviction-max-pod-grace-period` (30s) rather than the Pod's requested 120s, so the Pod gets far less graceful-shutdown time than its own spec asked for.",
+      "evidence": [
+        {
+          "source": "concepts/scheduling-eviction/node-pressure-eviction.md",
+          "url": "https://kubernetes.io/docs/concepts/scheduling-eviction/node-pressure-eviction/",
+          "lines": "180-199"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "hard",
+      "verified": false
+    },
+    {
+      "id": "MH12",
+      "category": "multi_hop",
+      "question": "A node is under memory pressure. Pod A has low priority but its memory usage does not exceed its request. Pod B has high priority but its memory usage does exceed its request. Which one is the kubelet more likely to evict, and why doesn't priority simply decide it?",
+      "gold_answer": "Pod B, despite its higher priority. The kubelet ranks eviction candidates by checking, first, whether the pod's usage of the starved resource exceeds its request - only pods that do are eligible at all. Priority is only used as a factor after that first filter. Since Pod A isn't exceeding its request, it won't be evicted regardless of how low its priority is; Pod B, despite being higher priority, does exceed its request and remains a valid eviction candidate.",
+      "evidence": [
+        {
+          "source": "concepts/scheduling-eviction/pod-priority-preemption.md",
+          "url": "https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/",
+          "lines": "332-345"
+        }
+      ],
+      "answerable": true,
+      "difficulty": "hard",
+      "verified": false
+    }
+  ]
+}

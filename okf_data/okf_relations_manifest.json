@@ -1,0 +1,1440 @@
+[
+  {
+    "id": "okf-relations/edges/000-deployment-replica-set",
+    "kind": "relation",
+    "subject": "Deployment",
+    "predicate": "owns",
+    "object": "ReplicaSet",
+    "subject_entity": "okf-relations/entities/deployment",
+    "object_entity": "okf-relations/entities/replica-set",
+    "grounding_sources": [
+      {
+        "source": "concepts/workloads/controllers/deployment.md",
+        "score": 1116,
+        "subject_hits": 428,
+        "object_hits": 130
+      },
+      {
+        "source": "concepts/workloads/controllers/replicaset.md",
+        "score": 213,
+        "subject_hits": 14,
+        "object_hits": 88
+      },
+      {
+        "source": "tasks/run-application/update-deployment-rolling.md",
+        "score": 178,
+        "subject_hits": 87,
+        "object_hits": 2
+      }
+    ],
+    "source": "concepts/workloads/controllers/deployment.md",
+    "text": "Deployment owns ReplicaSet. A Deployment creates and owns ReplicaSets via an owner reference; the garbage collector uses that reference, not labels, to cascade-delete ReplicaSets when the Deployment is deleted.",
+    "word_count": 29
+  },
+  {
+    "id": "okf-relations/edges/001-replica-set-pod",
+    "kind": "relation",
+    "subject": "ReplicaSet",
+    "predicate": "owns",
+    "object": "Pod",
+    "subject_entity": "okf-relations/entities/replica-set",
+    "object_entity": "okf-relations/entities/pod",
+    "grounding_sources": [
+      {
+        "source": "concepts/workloads/controllers/deployment.md",
+        "score": 1179,
+        "subject_hits": 130,
+        "object_hits": 140
+      },
+      {
+        "source": "concepts/workloads/controllers/replicaset.md",
+        "score": 753,
+        "subject_hits": 88,
+        "object_hits": 131
+      },
+      {
+        "source": "concepts/workloads/pods/pod-lifecycle.md",
+        "score": 711,
+        "subject_hits": 1,
+        "object_hits": 350
+      }
+    ],
+    "source": "concepts/workloads/controllers/deployment.md",
+    "text": "ReplicaSet owns Pod. A ReplicaSet creates and owns the Pods matching its selector via an owner reference, and recreates them if they disappear.",
+    "word_count": 23
+  },
+  {
+    "id": "okf-relations/edges/002-deployment-replica-set",
+    "kind": "relation",
+    "subject": "Deployment",
+    "predicate": "manages rollout via",
+    "object": "ReplicaSet",
+    "subject_entity": "okf-relations/entities/deployment",
+    "object_entity": "okf-relations/entities/replica-set",
+    "grounding_sources": [
+      {
+        "source": "concepts/workloads/controllers/deployment.md",
+        "score": 1662,
+        "subject_hits": 428,
+        "object_hits": 130
+      },
+      {
+        "source": "concepts/workloads/autoscaling/horizontal-pod-autoscale.md",
+        "score": 462,
+        "subject_hits": 22,
+        "object_hits": 5
+      },
+      {
+        "source": "tasks/run-application/update-deployment-rolling.md",
+        "score": 325,
+        "subject_hits": 87,
+        "object_hits": 2
+      }
+    ],
+    "source": "concepts/workloads/controllers/deployment.md",
+    "text": "Deployment manages rollout via ReplicaSet. Updating a Deployment's Pod template creates a new ReplicaSet and gradually scales it up while scaling the old ReplicaSet down - a rolling update.",
+    "word_count": 29
+  },
+  {
+    "id": "okf-relations/edges/003-stateful-set-pod",
+    "kind": "relation",
+    "subject": "StatefulSet",
+    "predicate": "owns",
+    "object": "Pod",
+    "subject_entity": "okf-relations/entities/stateful-set",
+    "object_entity": "okf-relations/entities/pod",
+    "grounding_sources": [
+      {
+        "source": "tutorials/stateful-application/basic-stateful-set.md",
+        "score": 790,
+        "subject_hits": 165,
+        "object_hits": 191
+      },
+      {
+        "source": "concepts/workloads/pods/pod-lifecycle.md",
+        "score": 709,
+        "subject_hits": 3,
+        "object_hits": 350
+      },
+      {
+        "source": "concepts/workloads/controllers/statefulset.md",
+        "score": 509,
+        "subject_hits": 97,
+        "object_hits": 129
+      }
+    ],
+    "source": "tutorials/stateful-application/basic-stateful-set.md",
+    "text": "StatefulSet owns Pod. A StatefulSet creates Pods directly (no intermediate ReplicaSet) with a stable name, ordinal index, and persistent identity across rescheduling.",
+    "word_count": 22
+  },
+  {
+    "id": "okf-relations/edges/004-daemon-set-pod",
+    "kind": "relation",
+    "subject": "DaemonSet",
+    "predicate": "owns",
+    "object": "Pod",
+    "subject_entity": "okf-relations/entities/daemon-set",
+    "object_entity": "okf-relations/entities/pod",
+    "grounding_sources": [
+      {
+        "source": "concepts/scheduling-eviction/assign-pod-node.md",
+        "score": 406,
+        "subject_hits": 5,
+        "object_hits": 195
+      },
+      {
+        "source": "concepts/workloads/pods/_index.md",
+        "score": 402,
+        "subject_hits": 2,
+        "object_hits": 199
+      },
+      {
+        "source": "concepts/workloads/controllers/daemonset.md",
+        "score": 328,
+        "subject_hits": 74,
+        "object_hits": 84
+      }
+    ],
+    "source": "concepts/scheduling-eviction/assign-pod-node.md",
+    "text": "DaemonSet owns Pod. A DaemonSet ensures one matching Pod runs on every Node (or every Node matching a selector), adding or removing Pods as Nodes join or leave.",
+    "word_count": 28
+  },
+  {
+    "id": "okf-relations/edges/005-job-pod",
+    "kind": "relation",
+    "subject": "Job",
+    "predicate": "owns",
+    "object": "Pod",
+    "subject_entity": "okf-relations/entities/job",
+    "object_entity": "okf-relations/entities/pod",
+    "grounding_sources": [
+      {
+        "source": "concepts/workloads/controllers/job.md",
+        "score": 1733,
+        "subject_hits": 464,
+        "object_hits": 341
+      },
+      {
+        "source": "concepts/workloads/pods/pod-lifecycle.md",
+        "score": 715,
+        "subject_hits": 6,
+        "object_hits": 350
+      },
+      {
+        "source": "concepts/workloads/pods/_index.md",
+        "score": 406,
+        "subject_hits": 4,
+        "object_hits": 199
+      }
+    ],
+    "source": "concepts/workloads/controllers/job.md",
+    "text": "Job owns Pod. A Job creates one or more Pods and tracks them to completion, retrying failed Pods up to a configured backoff limit.",
+    "word_count": 24
+  },
+  {
+    "id": "okf-relations/edges/006-cron-job-job",
+    "kind": "relation",
+    "subject": "CronJob",
+    "predicate": "creates",
+    "object": "Job",
+    "subject_entity": "okf-relations/entities/cron-job",
+    "object_entity": "okf-relations/entities/job",
+    "grounding_sources": [
+      {
+        "source": "concepts/workloads/controllers/job.md",
+        "score": 1001,
+        "subject_hits": 8,
+        "object_hits": 464
+      },
+      {
+        "source": "concepts/workloads/controllers/cron-jobs.md",
+        "score": 707,
+        "subject_hits": 57,
+        "object_hits": 136
+      },
+      {
+        "source": "tasks/extend-kubernetes/custom-resources/custom-resource-definitions.md",
+        "score": 418,
+        "subject_hits": 2,
+        "object_hits": 3
+      }
+    ],
+    "source": "concepts/workloads/controllers/job.md",
+    "text": "CronJob creates Job. A CronJob creates a new Job object on each scheduled trigger; the Job then owns its own Pods as usual.",
+    "word_count": 23
+  },
+  {
+    "id": "okf-relations/edges/007-service-pod",
+    "kind": "relation",
+    "subject": "Service",
+    "predicate": "selects",
+    "object": "Pod",
+    "subject_entity": "okf-relations/entities/service",
+    "object_entity": "okf-relations/entities/pod",
+    "grounding_sources": [
+      {
+        "source": "concepts/workloads/pods/pod-lifecycle.md",
+        "score": 718,
+        "subject_hits": 9,
+        "object_hits": 350
+      },
+      {
+        "source": "concepts/workloads/controllers/job.md",
+        "score": 705,
+        "subject_hits": 4,
+        "object_hits": 341
+      },
+      {
+        "source": "concepts/services-networking/service.md",
+        "score": 638,
+        "subject_hits": 264,
+        "object_hits": 52
+      }
+    ],
+    "source": "concepts/workloads/pods/pod-lifecycle.md",
+    "text": "Service selects Pod. A Service finds the Pods it load-balances to via a label selector matched against Pod labels, not owner references.",
+    "word_count": 22
+  },
+  {
+    "id": "okf-relations/edges/008-service-endpoint-slice",
+    "kind": "relation",
+    "subject": "Service",
+    "predicate": "backed by",
+    "object": "EndpointSlice",
+    "subject_entity": "okf-relations/entities/service",
+    "object_entity": "okf-relations/entities/endpoint-slice",
+    "grounding_sources": [
+      {
+        "source": "concepts/services-networking/service.md",
+        "score": 716,
+        "subject_hits": 264,
+        "object_hits": 37
+      },
+      {
+        "source": "concepts/services-networking/endpoint-slices.md",
+        "score": 366,
+        "subject_hits": 20,
+        "object_hits": 64
+      },
+      {
+        "source": "tasks/debug/debug-application/debug-service.md",
+        "score": 188,
+        "subject_hits": 79,
+        "object_hits": 6
+      }
+    ],
+    "source": "concepts/services-networking/service.md",
+    "text": "Service backed by EndpointSlice. The endpoints controller watches a Service's selector and keeps a matching EndpointSlice updated with the current set of Pod IPs and ports.",
+    "word_count": 26
+  },
+  {
+    "id": "okf-relations/edges/009-ingress-service",
+    "kind": "relation",
+    "subject": "Ingress",
+    "predicate": "routes to",
+    "object": "Service",
+    "subject_entity": "okf-relations/entities/ingress",
+    "object_entity": "okf-relations/entities/service",
+    "grounding_sources": [
+      {
+        "source": "concepts/services-networking/ingress.md",
+        "score": 746,
+        "subject_hits": 151,
+        "object_hits": 42
+      },
+      {
+        "source": "concepts/services-networking/service.md",
+        "score": 636,
+        "subject_hits": 12,
+        "object_hits": 264
+      },
+      {
+        "source": "tasks/debug/debug-application/debug-service.md",
+        "score": 405,
+        "subject_hits": 2,
+        "object_hits": 79
+      }
+    ],
+    "source": "concepts/services-networking/ingress.md",
+    "text": "Ingress routes to Service. An Ingress defines host/path rules that an ingress controller uses to forward external traffic to a named Service.",
+    "word_count": 22
+  },
+  {
+    "id": "okf-relations/edges/010-ingress-ingress-class",
+    "kind": "relation",
+    "subject": "Ingress",
+    "predicate": "implemented by",
+    "object": "IngressClass",
+    "subject_entity": "okf-relations/entities/ingress",
+    "object_entity": "okf-relations/entities/ingress-class",
+    "grounding_sources": [
+      {
+        "source": "concepts/services-networking/ingress.md",
+        "score": 613,
+        "subject_hits": 151,
+        "object_hits": 34
+      },
+      {
+        "source": "concepts/services-networking/ingress-controllers.md",
+        "score": 327,
+        "subject_hits": 76,
+        "object_hits": 8
+      },
+      {
+        "source": "tasks/configure-pod-container/migrate-from-psp.md",
+        "score": 46,
+        "subject_hits": 1,
+        "object_hits": 1
+      }
+    ],
+    "source": "concepts/services-networking/ingress.md",
+    "text": "Ingress implemented by IngressClass. An Ingress references an IngressClass to say which controller implementation should handle it, since a cluster can run more than one.",
+    "word_count": 25
+  },
+  {
+    "id": "okf-relations/edges/011-network-policy-pod",
+    "kind": "relation",
+    "subject": "NetworkPolicy",
+    "predicate": "selects",
+    "object": "Pod",
+    "subject_entity": "okf-relations/entities/network-policy",
+    "object_entity": "okf-relations/entities/pod",
+    "grounding_sources": [
+      {
+        "source": "concepts/services-networking/network-policies.md",
+        "score": 676,
+        "subject_hits": 57,
+        "object_hits": 125
+      },
+      {
+        "source": "concepts/security/multi-tenancy.md",
+        "score": 87,
+        "subject_hits": 1,
+        "object_hits": 41
+      },
+      {
+        "source": "concepts/services-networking/_index.md",
+        "score": 69,
+        "subject_hits": 4,
+        "object_hits": 26
+      }
+    ],
+    "source": "concepts/services-networking/network-policies.md",
+    "text": "NetworkPolicy selects Pod. A NetworkPolicy applies to the Pods matched by its pod selector, restricting the ingress/egress traffic those Pods are allowed.",
+    "word_count": 22
+  },
+  {
+    "id": "okf-relations/edges/012-pod-config-map",
+    "kind": "relation",
+    "subject": "Pod",
+    "predicate": "mounts",
+    "object": "ConfigMap",
+    "subject_entity": "okf-relations/entities/pod",
+    "object_entity": "okf-relations/entities/config-map",
+    "grounding_sources": [
+      {
+        "source": "concepts/storage/volumes.md",
+        "score": 1760,
+        "subject_hits": 130,
+        "object_hits": 18
+      },
+      {
+        "source": "tasks/configure-pod-container/configure-pod-configmap.md",
+        "score": 1662,
+        "subject_hits": 103,
+        "object_hits": 236
+      },
+      {
+        "source": "tutorials/configuration/updating-configuration-via-a-configmap.md",
+        "score": 1275,
+        "subject_hits": 75,
+        "object_hits": 168
+      }
+    ],
+    "source": "concepts/storage/volumes.md",
+    "text": "Pod mounts ConfigMap. A Pod can consume a ConfigMap as mounted files, environment variables, or command-line arguments.",
+    "word_count": 17
+  },
+  {
+    "id": "okf-relations/edges/013-pod-secret",
+    "kind": "relation",
+    "subject": "Pod",
+    "predicate": "mounts",
+    "object": "Secret",
+    "subject_entity": "okf-relations/entities/pod",
+    "object_entity": "okf-relations/entities/secret",
+    "grounding_sources": [
+      {
+        "source": "concepts/storage/volumes.md",
+        "score": 1870,
+        "subject_hits": 130,
+        "object_hits": 40
+      },
+      {
+        "source": "concepts/configuration/secret.md",
+        "score": 1415,
+        "subject_hits": 61,
+        "object_hits": 237
+      },
+      {
+        "source": "concepts/storage/persistent-volumes.md",
+        "score": 1279,
+        "subject_hits": 72,
+        "object_hits": 2
+      }
+    ],
+    "source": "concepts/storage/volumes.md",
+    "text": "Pod mounts Secret. A Pod can consume a Secret the same way it consumes a ConfigMap - mounted files or environment variables - with extra handling conventions since the data is sensitive.",
+    "word_count": 32
+  },
+  {
+    "id": "okf-relations/edges/014-pod-persistent-volume-claim",
+    "kind": "relation",
+    "subject": "Pod",
+    "predicate": "claims storage via",
+    "object": "PersistentVolumeClaim",
+    "subject_entity": "okf-relations/entities/pod",
+    "object_entity": "okf-relations/entities/persistent-volume-claim",
+    "grounding_sources": [
+      {
+        "source": "concepts/storage/persistent-volumes.md",
+        "score": 1765,
+        "subject_hits": 72,
+        "object_hits": 47
+      },
+      {
+        "source": "concepts/storage/volumes.md",
+        "score": 1276,
+        "subject_hits": 130,
+        "object_hits": 10
+      },
+      {
+        "source": "concepts/scheduling-eviction/dynamic-resource-allocation.md",
+        "score": 1121,
+        "subject_hits": 182,
+        "object_hits": 2
+      }
+    ],
+    "source": "concepts/storage/persistent-volumes.md",
+    "text": "Pod claims storage via PersistentVolumeClaim. A Pod references a PersistentVolumeClaim by name in its volumes list to get durable storage that outlives the Pod itself.",
+    "word_count": 25
+  },
+  {
+    "id": "okf-relations/edges/015-persistent-volume-claim-persistent-volume",
+    "kind": "relation",
+    "subject": "PersistentVolumeClaim",
+    "predicate": "binds",
+    "object": "PersistentVolume",
+    "subject_entity": "okf-relations/entities/persistent-volume-claim",
+    "object_entity": "okf-relations/entities/persistent-volume",
+    "grounding_sources": [
+      {
+        "source": "concepts/storage/persistent-volumes.md",
+        "score": 1208,
+        "subject_hits": 47,
+        "object_hits": 110
+      },
+      {
+        "source": "concepts/scheduling-eviction/dynamic-resource-allocation.md",
+        "score": 860,
+        "subject_hits": 2,
+        "object_hits": 2
+      },
+      {
+        "source": "tutorials/configuration/configure-persistent-volume-storage.md",
+        "score": 435,
+        "subject_hits": 22,
+        "object_hits": 53
+      }
+    ],
+    "source": "concepts/storage/persistent-volumes.md",
+    "text": "PersistentVolumeClaim binds PersistentVolume. A PersistentVolumeClaim is matched and bound to a PersistentVolume whose capacity, access mode, and class satisfy the claim's request.",
+    "word_count": 22
+  },
+  {
+    "id": "okf-relations/edges/016-persistent-volume-claim-storage-class",
+    "kind": "relation",
+    "subject": "PersistentVolumeClaim",
+    "predicate": "provisioned via",
+    "object": "StorageClass",
+    "subject_entity": "okf-relations/entities/persistent-volume-claim",
+    "object_entity": "okf-relations/entities/storage-class",
+    "grounding_sources": [
+      {
+        "source": "concepts/storage/persistent-volumes.md",
+        "score": 473,
+        "subject_hits": 47,
+        "object_hits": 68
+      },
+      {
+        "source": "concepts/storage/storage-classes.md",
+        "score": 405,
+        "subject_hits": 8,
+        "object_hits": 55
+      },
+      {
+        "source": "concepts/storage/dynamic-provisioning.md",
+        "score": 166,
+        "subject_hits": 7,
+        "object_hits": 22
+      }
+    ],
+    "source": "concepts/storage/persistent-volumes.md",
+    "text": "PersistentVolumeClaim provisioned via StorageClass. If no PersistentVolume already matches a claim, the claim's StorageClass tells its provisioner to create one dynamically.",
+    "word_count": 21
+  },
+  {
+    "id": "okf-relations/edges/017-pod-node",
+    "kind": "relation",
+    "subject": "Pod",
+    "predicate": "scheduled onto",
+    "object": "Node",
+    "subject_entity": "okf-relations/entities/pod",
+    "object_entity": "okf-relations/entities/node",
+    "grounding_sources": [
+      {
+        "source": "concepts/scheduling-eviction/assign-pod-node.md",
+        "score": 1330,
+        "subject_hits": 195,
+        "object_hits": 179
+      },
+      {
+        "source": "concepts/scheduling-eviction/taint-and-toleration.md",
+        "score": 981,
+        "subject_hits": 77,
+        "object_hits": 148
+      },
+      {
+        "source": "concepts/scheduling-eviction/dynamic-resource-allocation.md",
+        "score": 962,
+        "subject_hits": 182,
+        "object_hits": 104
+      }
+    ],
+    "source": "concepts/scheduling-eviction/assign-pod-node.md",
+    "text": "Pod scheduled onto Node. The scheduler assigns a Pod to a Node that satisfies its resource requests, node selector/affinity rules, and any taints the Node has that the Pod must tolerate.",
+    "word_count": 31
+  },
+  {
+    "id": "okf-relations/edges/018-pod-service-account",
+    "kind": "relation",
+    "subject": "Pod",
+    "predicate": "authenticates as",
+    "object": "ServiceAccount",
+    "subject_entity": "okf-relations/entities/pod",
+    "object_entity": "okf-relations/entities/service-account",
+    "grounding_sources": [
+      {
+        "source": "tasks/configure-pod-container/configure-service-account.md",
+        "score": 685,
+        "subject_hits": 46,
+        "object_hits": 73
+      },
+      {
+        "source": "concepts/security/service-accounts.md",
+        "score": 611,
+        "subject_hits": 45,
+        "object_hits": 58
+      },
+      {
+        "source": "concepts/configuration/secret.md",
+        "score": 409,
+        "subject_hits": 61,
+        "object_hits": 22
+      }
+    ],
+    "source": "tasks/configure-pod-container/configure-service-account.md",
+    "text": "Pod authenticates as ServiceAccount. Every Pod runs under a ServiceAccount identity (default one if none is specified) used for API server authentication from inside the Pod.",
+    "word_count": 26
+  },
+  {
+    "id": "okf-relations/edges/019-role-binding-role",
+    "kind": "relation",
+    "subject": "RoleBinding",
+    "predicate": "grants",
+    "object": "Role",
+    "subject_entity": "okf-relations/entities/role-binding",
+    "object_entity": "okf-relations/entities/role",
+    "grounding_sources": [
+      {
+        "source": "concepts/security/rbac-good-practices.md",
+        "score": 88,
+        "subject_hits": 5,
+        "object_hits": 9
+      },
+      {
+        "source": "concepts/security/service-accounts.md",
+        "score": 55,
+        "subject_hits": 1,
+        "object_hits": 7
+      },
+      {
+        "source": "tasks/configure-pod-container/migrate-from-psp.md",
+        "score": 54,
+        "subject_hits": 5,
+        "object_hits": 13
+      }
+    ],
+    "source": "concepts/security/rbac-good-practices.md",
+    "text": "RoleBinding grants Role. A RoleBinding attaches the permissions defined in a Role to specific subjects (users, groups, or ServiceAccounts) within one Namespace.",
+    "word_count": 22
+  },
+  {
+    "id": "okf-relations/edges/020-cluster-role-binding-cluster-role",
+    "kind": "relation",
+    "subject": "ClusterRoleBinding",
+    "predicate": "grants",
+    "object": "ClusterRole",
+    "subject_entity": "okf-relations/entities/cluster-role-binding",
+    "object_entity": "okf-relations/entities/cluster-role",
+    "grounding_sources": [
+      {
+        "source": "concepts/security/rbac-good-practices.md",
+        "score": 61,
+        "subject_hits": 2,
+        "object_hits": 3
+      },
+      {
+        "source": "tutorials/cluster-management/install-use-dra.md",
+        "score": 39,
+        "subject_hits": 4,
+        "object_hits": 8
+      },
+      {
+        "source": "setup/production-environment/tools/kubeadm/troubleshooting-kubeadm.md",
+        "score": 38,
+        "subject_hits": 1,
+        "object_hits": 3
+      }
+    ],
+    "source": "concepts/security/rbac-good-practices.md",
+    "text": "ClusterRoleBinding grants ClusterRole. A ClusterRoleBinding attaches the permissions in a ClusterRole to subjects cluster-wide, rather than scoped to one Namespace.",
+    "word_count": 20
+  },
+  {
+    "id": "okf-relations/edges/021-horizontal-pod-autoscaler-deployment",
+    "kind": "relation",
+    "subject": "HorizontalPodAutoscaler",
+    "predicate": "scales",
+    "object": "Deployment",
+    "subject_entity": "okf-relations/entities/horizontal-pod-autoscaler",
+    "object_entity": "okf-relations/entities/deployment",
+    "grounding_sources": [
+      {
+        "source": "concepts/workloads/controllers/deployment.md",
+        "score": 1515,
+        "subject_hits": 1,
+        "object_hits": 428
+      },
+      {
+        "source": "concepts/workloads/autoscaling/horizontal-pod-autoscale.md",
+        "score": 739,
+        "subject_hits": 37,
+        "object_hits": 22
+      },
+      {
+        "source": "tasks/run-application/horizontal-pod-autoscale-walkthrough.md",
+        "score": 558,
+        "subject_hits": 30,
+        "object_hits": 21
+      }
+    ],
+    "source": "concepts/workloads/controllers/deployment.md",
+    "text": "HorizontalPodAutoscaler scales Deployment. An HPA watches metrics (e.g. CPU utilization) and adjusts the replica count on the Deployment (or other scalable controller) it targets.",
+    "word_count": 24
+  },
+  {
+    "id": "okf-relations/edges/022-pod-disruption-budget-pod",
+    "kind": "relation",
+    "subject": "PodDisruptionBudget",
+    "predicate": "protects",
+    "object": "Pod",
+    "subject_entity": "okf-relations/entities/pod-disruption-budget",
+    "object_entity": "okf-relations/entities/pod",
+    "grounding_sources": [
+      {
+        "source": "concepts/workloads/pods/pod-lifecycle.md",
+        "score": 714,
+        "subject_hits": 1,
+        "object_hits": 350
+      },
+      {
+        "source": "concepts/scheduling-eviction/node-pressure-eviction.md",
+        "score": 493,
+        "subject_hits": 2,
+        "object_hits": 81
+      },
+      {
+        "source": "concepts/workloads/pods/_index.md",
+        "score": 400,
+        "subject_hits": 1,
+        "object_hits": 199
+      }
+    ],
+    "source": "concepts/workloads/pods/pod-lifecycle.md",
+    "text": "PodDisruptionBudget protects Pod. A PodDisruptionBudget caps how many of a matching set of Pods can be evicted at once during voluntary disruptions like a Node drain or cluster upgrade.",
+    "word_count": 29
+  },
+  {
+    "id": "okf-relations/edges/023-resource-quota-namespace",
+    "kind": "relation",
+    "subject": "ResourceQuota",
+    "predicate": "constrains",
+    "object": "Namespace",
+    "subject_entity": "okf-relations/entities/resource-quota",
+    "object_entity": "okf-relations/entities/namespace",
+    "grounding_sources": [
+      {
+        "source": "concepts/policy/resource-quotas.md",
+        "score": 1282,
+        "subject_hits": 43,
+        "object_hits": 94
+      },
+      {
+        "source": "tasks/administer-cluster/manage-resources/quota-memory-cpu-namespace.md",
+        "score": 368,
+        "subject_hits": 12,
+        "object_hits": 28
+      },
+      {
+        "source": "concepts/configuration/manage-resources-containers.md",
+        "score": 355,
+        "subject_hits": 4,
+        "object_hits": 10
+      }
+    ],
+    "source": "concepts/policy/resource-quotas.md",
+    "text": "ResourceQuota constrains Namespace. A ResourceQuota caps the total resources (CPU, memory, object counts) that can be consumed by everything inside one Namespace.",
+    "word_count": 22
+  },
+  {
+    "id": "okf-relations/edges/024-limit-range-namespace",
+    "kind": "relation",
+    "subject": "LimitRange",
+    "predicate": "constrains",
+    "object": "Namespace",
+    "subject_entity": "okf-relations/entities/limit-range",
+    "object_entity": "okf-relations/entities/namespace",
+    "grounding_sources": [
+      {
+        "source": "concepts/policy/resource-quotas.md",
+        "score": 590,
+        "subject_hits": 3,
+        "object_hits": 94
+      },
+      {
+        "source": "concepts/workloads/controllers/job.md",
+        "score": 399,
+        "subject_hits": 1,
+        "object_hits": 5
+      },
+      {
+        "source": "concepts/policy/limit-range.md",
+        "score": 370,
+        "subject_hits": 23,
+        "object_hits": 33
+      }
+    ],
+    "source": "concepts/policy/resource-quotas.md",
+    "text": "LimitRange constrains Namespace. A LimitRange sets default and min/max per-Pod or per-Container resource constraints for everything created in one Namespace.",
+    "word_count": 20
+  },
+  {
+    "id": "okf-relations/edges/025-priority-class-pod",
+    "kind": "relation",
+    "subject": "PriorityClass",
+    "predicate": "assigns priority to",
+    "object": "Pod",
+    "subject_entity": "okf-relations/entities/priority-class",
+    "object_entity": "okf-relations/entities/pod",
+    "grounding_sources": [
+      {
+        "source": "concepts/scheduling-eviction/pod-priority-preemption.md",
+        "score": 1065,
+        "subject_hits": 42,
+        "object_hits": 180
+      },
+      {
+        "source": "concepts/workloads/pods/_index.md",
+        "score": 406,
+        "subject_hits": 1,
+        "object_hits": 199
+      },
+      {
+        "source": "concepts/policy/resource-quotas.md",
+        "score": 389,
+        "subject_hits": 15,
+        "object_hits": 115
+      }
+    ],
+    "source": "concepts/scheduling-eviction/pod-priority-preemption.md",
+    "text": "PriorityClass assigns priority to Pod. A Pod references a PriorityClass to get a priority value the scheduler uses to decide preemption order under resource pressure.",
+    "word_count": 25
+  },
+  {
+    "id": "okf-relations/edges/026-pod-container",
+    "kind": "relation",
+    "subject": "Pod",
+    "predicate": "contains",
+    "object": "Container",
+    "subject_entity": "okf-relations/entities/pod",
+    "object_entity": "okf-relations/entities/container",
+    "grounding_sources": [
+      {
+        "source": "concepts/workloads/pods/pod-lifecycle.md",
+        "score": 2210,
+        "subject_hits": 350,
+        "object_hits": 299
+      },
+      {
+        "source": "concepts/workloads/pods/_index.md",
+        "score": 914,
+        "subject_hits": 199,
+        "object_hits": 102
+      },
+      {
+        "source": "concepts/storage/volumes.md",
+        "score": 906,
+        "subject_hits": 130,
+        "object_hits": 125
+      }
+    ],
+    "source": "concepts/workloads/pods/pod-lifecycle.md",
+    "text": "Pod contains Container. A Pod's spec lists one or more Containers that share the Pod's network namespace and, optionally, its volumes.",
+    "word_count": 21
+  },
+  {
+    "id": "okf-relations/edges/027-namespace-pod",
+    "kind": "relation",
+    "subject": "Namespace",
+    "predicate": "scopes",
+    "object": "Pod",
+    "subject_entity": "okf-relations/entities/namespace",
+    "object_entity": "okf-relations/entities/pod",
+    "grounding_sources": [
+      {
+        "source": "concepts/workloads/pods/pod-lifecycle.md",
+        "score": 715,
+        "subject_hits": 3,
+        "object_hits": 350
+      },
+      {
+        "source": "concepts/policy/resource-quotas.md",
+        "score": 709,
+        "subject_hits": 94,
+        "object_hits": 115
+      },
+      {
+        "source": "concepts/workloads/controllers/job.md",
+        "score": 707,
+        "subject_hits": 5,
+        "object_hits": 341
+      }
+    ],
+    "source": "concepts/workloads/pods/pod-lifecycle.md",
+    "text": "Namespace scopes Pod. A Pod exists inside exactly one Namespace, which isolates it (by name) from same-named objects in other Namespaces.",
+    "word_count": 21
+  },
+  {
+    "id": "okf-relations/edges/028-namespace-service",
+    "kind": "relation",
+    "subject": "Namespace",
+    "predicate": "scopes",
+    "object": "Service",
+    "subject_entity": "okf-relations/entities/namespace",
+    "object_entity": "okf-relations/entities/service",
+    "grounding_sources": [
+      {
+        "source": "concepts/services-networking/service.md",
+        "score": 665,
+        "subject_hits": 7,
+        "object_hits": 264
+      },
+      {
+        "source": "concepts/policy/resource-quotas.md",
+        "score": 538,
+        "subject_hits": 94,
+        "object_hits": 22
+      },
+      {
+        "source": "concepts/services-networking/dns-pod-service.md",
+        "score": 475,
+        "subject_hits": 33,
+        "object_hits": 32
+      }
+    ],
+    "source": "concepts/services-networking/service.md",
+    "text": "Namespace scopes Service. A Service is namespaced; Pods in other Namespaces must use its qualified DNS name to reach it across the boundary.",
+    "word_count": 23
+  },
+  {
+    "id": "okf-relations/entities/pod",
+    "kind": "entity",
+    "title": "Pod",
+    "description": "The smallest deployable unit - one or more containers that share network and storage, scheduled together onto a single Node.",
+    "outgoing_relations": [
+      "okf-relations/edges/012-pod-config-map",
+      "okf-relations/edges/013-pod-secret",
+      "okf-relations/edges/014-pod-persistent-volume-claim",
+      "okf-relations/edges/017-pod-node",
+      "okf-relations/edges/018-pod-service-account",
+      "okf-relations/edges/026-pod-container"
+    ],
+    "incoming_relations": [
+      "okf-relations/edges/001-replica-set-pod",
+      "okf-relations/edges/003-stateful-set-pod",
+      "okf-relations/edges/004-daemon-set-pod",
+      "okf-relations/edges/005-job-pod",
+      "okf-relations/edges/007-service-pod",
+      "okf-relations/edges/011-network-policy-pod",
+      "okf-relations/edges/022-pod-disruption-budget-pod",
+      "okf-relations/edges/025-priority-class-pod",
+      "okf-relations/edges/027-namespace-pod"
+    ],
+    "primary_sources": [
+      "concepts/configuration/manage-resources-containers.md",
+      "concepts/scheduling-eviction/assign-pod-node.md"
+    ],
+    "source": "concepts/configuration/manage-resources-containers.md",
+    "text": "Pod: The smallest deployable unit - one or more containers that share network and storage, scheduled together onto a single Node. Pod mounts ConfigMap. Pod mounts Secret. Pod claims storage via PersistentVolumeClaim. Pod scheduled onto Node. Pod authenticates as ServiceAccount. Pod contains Container. ReplicaSet owns Pod. StatefulSet owns Pod. DaemonSet owns Pod. Job owns Pod. Service selects Pod. NetworkPolicy selects Pod. PodDisruptionBudget protects Pod. PriorityClass assigns priority to Pod. Namespace scopes Pod.",
+    "word_count": 72
+  },
+  {
+    "id": "okf-relations/entities/container",
+    "kind": "entity",
+    "title": "Container",
+    "description": "A single running process image inside a Pod, defined in the Pod's container spec.",
+    "outgoing_relations": [],
+    "incoming_relations": [
+      "okf-relations/edges/026-pod-container"
+    ],
+    "primary_sources": [
+      "concepts/configuration/manage-resources-containers.md",
+      "concepts/containers/_index.md"
+    ],
+    "source": "concepts/configuration/manage-resources-containers.md",
+    "text": "Container: A single running process image inside a Pod, defined in the Pod's container spec. Pod contains Container.",
+    "word_count": 18
+  },
+  {
+    "id": "okf-relations/entities/replica-set",
+    "kind": "entity",
+    "title": "ReplicaSet",
+    "description": "Ensures a specified number of identical Pod replicas are running at any time, replacing Pods that fail or are deleted.",
+    "outgoing_relations": [
+      "okf-relations/edges/001-replica-set-pod"
+    ],
+    "incoming_relations": [
+      "okf-relations/edges/000-deployment-replica-set",
+      "okf-relations/edges/002-deployment-replica-set"
+    ],
+    "primary_sources": [
+      "concepts/workloads/controllers/replicaset.md"
+    ],
+    "source": "concepts/workloads/controllers/replicaset.md",
+    "text": "ReplicaSet: Ensures a specified number of identical Pod replicas are running at any time, replacing Pods that fail or are deleted. ReplicaSet owns Pod. Deployment owns ReplicaSet. Deployment manages rollout via ReplicaSet.",
+    "word_count": 32
+  },
+  {
+    "id": "okf-relations/entities/deployment",
+    "kind": "entity",
+    "title": "Deployment",
+    "description": "Declaratively manages ReplicaSets to provide rolling updates, rollbacks, and scaling for stateless Pods.",
+    "outgoing_relations": [
+      "okf-relations/edges/000-deployment-replica-set",
+      "okf-relations/edges/002-deployment-replica-set"
+    ],
+    "incoming_relations": [
+      "okf-relations/edges/021-horizontal-pod-autoscaler-deployment"
+    ],
+    "primary_sources": [
+      "concepts/workloads/controllers/deployment.md",
+      "tasks/run-application/run-stateless-application-deployment.md"
+    ],
+    "source": "concepts/workloads/controllers/deployment.md",
+    "text": "Deployment: Declaratively manages ReplicaSets to provide rolling updates, rollbacks, and scaling for stateless Pods. Deployment owns ReplicaSet. Deployment manages rollout via ReplicaSet. HorizontalPodAutoscaler scales Deployment.",
+    "word_count": 25
+  },
+  {
+    "id": "okf-relations/entities/stateful-set",
+    "kind": "entity",
+    "title": "StatefulSet",
+    "description": "Manages Pods that need a stable network identity, stable storage, and ordered, sequential deployment/scaling.",
+    "outgoing_relations": [
+      "okf-relations/edges/003-stateful-set-pod"
+    ],
+    "incoming_relations": [],
+    "primary_sources": [
+      "concepts/workloads/controllers/statefulset.md",
+      "tasks/debug/debug-application/debug-statefulset.md"
+    ],
+    "source": "concepts/workloads/controllers/statefulset.md",
+    "text": "StatefulSet: Manages Pods that need a stable network identity, stable storage, and ordered, sequential deployment/scaling. StatefulSet owns Pod.",
+    "word_count": 18
+  },
+  {
+    "id": "okf-relations/entities/daemon-set",
+    "kind": "entity",
+    "title": "DaemonSet",
+    "description": "Ensures a copy of a Pod runs on every (or every matching) Node in the cluster, added or removed as Nodes join or leave.",
+    "outgoing_relations": [
+      "okf-relations/edges/004-daemon-set-pod"
+    ],
+    "incoming_relations": [],
+    "primary_sources": [
+      "concepts/workloads/controllers/daemonset.md",
+      "tasks/manage-daemon/create-daemon-set.md"
+    ],
+    "source": "concepts/workloads/controllers/daemonset.md",
+    "text": "DaemonSet: Ensures a copy of a Pod runs on every (or every matching) Node in the cluster, added or removed as Nodes join or leave. DaemonSet owns Pod.",
+    "word_count": 28
+  },
+  {
+    "id": "okf-relations/entities/job",
+    "kind": "entity",
+    "title": "Job",
+    "description": "Runs Pods to completion for a finite task, retrying on failure up to a configured limit.",
+    "outgoing_relations": [
+      "okf-relations/edges/005-job-pod"
+    ],
+    "incoming_relations": [
+      "okf-relations/edges/006-cron-job-job"
+    ],
+    "primary_sources": [
+      "concepts/workloads/controllers/cron-jobs.md",
+      "concepts/workloads/controllers/job.md"
+    ],
+    "source": "concepts/workloads/controllers/cron-jobs.md",
+    "text": "Job: Runs Pods to completion for a finite task, retrying on failure up to a configured limit. Job owns Pod. CronJob creates Job.",
+    "word_count": 23
+  },
+  {
+    "id": "okf-relations/entities/cron-job",
+    "kind": "entity",
+    "title": "CronJob",
+    "description": "Creates Jobs on a repeating schedule, like a cluster-native cron.",
+    "outgoing_relations": [
+      "okf-relations/edges/006-cron-job-job"
+    ],
+    "incoming_relations": [],
+    "primary_sources": [
+      "concepts/workloads/controllers/cron-jobs.md",
+      "tasks/job/automated-tasks-with-cron-jobs.md"
+    ],
+    "source": "concepts/workloads/controllers/cron-jobs.md",
+    "text": "CronJob: Creates Jobs on a repeating schedule, like a cluster-native cron. CronJob creates Job.",
+    "word_count": 14
+  },
+  {
+    "id": "okf-relations/entities/service",
+    "kind": "entity",
+    "title": "Service",
+    "description": "A stable virtual IP and DNS name that load-balances traffic to a dynamic set of Pods, found via a label selector.",
+    "outgoing_relations": [
+      "okf-relations/edges/007-service-pod",
+      "okf-relations/edges/008-service-endpoint-slice"
+    ],
+    "incoming_relations": [
+      "okf-relations/edges/009-ingress-service",
+      "okf-relations/edges/028-namespace-service"
+    ],
+    "primary_sources": [
+      "concepts/security/service-accounts.md",
+      "concepts/services-networking/_index.md"
+    ],
+    "source": "concepts/security/service-accounts.md",
+    "text": "Service: A stable virtual IP and DNS name that load-balances traffic to a dynamic set of Pods, found via a label selector. Service selects Pod. Service backed by EndpointSlice. Ingress routes to Service. Namespace scopes Service.",
+    "word_count": 36
+  },
+  {
+    "id": "okf-relations/entities/endpoint-slice",
+    "kind": "entity",
+    "title": "EndpointSlice",
+    "description": "Tracks the actual set of network endpoints (Pod IPs and ports) that currently match a Service's selector.",
+    "outgoing_relations": [],
+    "incoming_relations": [
+      "okf-relations/edges/008-service-endpoint-slice"
+    ],
+    "primary_sources": [
+      "concepts/services-networking/endpoint-slices.md"
+    ],
+    "source": "concepts/services-networking/endpoint-slices.md",
+    "text": "EndpointSlice: Tracks the actual set of network endpoints (Pod IPs and ports) that currently match a Service's selector. Service backed by EndpointSlice.",
+    "word_count": 22
+  },
+  {
+    "id": "okf-relations/entities/ingress",
+    "kind": "entity",
+    "title": "Ingress",
+    "description": "Routes external HTTP/HTTPS traffic to Services inside the cluster based on host/path rules.",
+    "outgoing_relations": [
+      "okf-relations/edges/009-ingress-service",
+      "okf-relations/edges/010-ingress-ingress-class"
+    ],
+    "incoming_relations": [],
+    "primary_sources": [
+      "concepts/services-networking/ingress-controllers.md",
+      "concepts/services-networking/ingress.md"
+    ],
+    "source": "concepts/services-networking/ingress-controllers.md",
+    "text": "Ingress: Routes external HTTP/HTTPS traffic to Services inside the cluster based on host/path rules. Ingress routes to Service. Ingress implemented by IngressClass.",
+    "word_count": 22
+  },
+  {
+    "id": "okf-relations/entities/ingress-class",
+    "kind": "entity",
+    "title": "IngressClass",
+    "description": "Identifies which ingress controller implementation should handle a given Ingress resource.",
+    "outgoing_relations": [],
+    "incoming_relations": [
+      "okf-relations/edges/010-ingress-ingress-class"
+    ],
+    "primary_sources": [],
+    "source": null,
+    "text": "IngressClass: Identifies which ingress controller implementation should handle a given Ingress resource. Ingress implemented by IngressClass.",
+    "word_count": 16
+  },
+  {
+    "id": "okf-relations/entities/network-policy",
+    "kind": "entity",
+    "title": "NetworkPolicy",
+    "description": "Firewall-like rules that restrict which Pods may communicate with which other Pods or endpoints.",
+    "outgoing_relations": [
+      "okf-relations/edges/011-network-policy-pod"
+    ],
+    "incoming_relations": [],
+    "primary_sources": [
+      "tasks/administer-cluster/network-policy-provider/antrea-network-policy.md",
+      "tasks/administer-cluster/network-policy-provider/calico-network-policy.md"
+    ],
+    "source": "tasks/administer-cluster/network-policy-provider/antrea-network-policy.md",
+    "text": "NetworkPolicy: Firewall-like rules that restrict which Pods may communicate with which other Pods or endpoints. NetworkPolicy selects Pod.",
+    "word_count": 18
+  },
+  {
+    "id": "okf-relations/entities/config-map",
+    "kind": "entity",
+    "title": "ConfigMap",
+    "description": "Holds non-secret configuration data as key/value pairs that can be injected into Pods as env vars, files, or CLI args.",
+    "outgoing_relations": [],
+    "incoming_relations": [
+      "okf-relations/edges/012-pod-config-map"
+    ],
+    "primary_sources": [
+      "concepts/configuration/configmap.md",
+      "tasks/configure-pod-container/configure-pod-configmap.md"
+    ],
+    "source": "concepts/configuration/configmap.md",
+    "text": "ConfigMap: Holds non-secret configuration data as key/value pairs that can be injected into Pods as env vars, files, or CLI args. Pod mounts ConfigMap.",
+    "word_count": 24
+  },
+  {
+    "id": "okf-relations/entities/secret",
+    "kind": "entity",
+    "title": "Secret",
+    "description": "Like a ConfigMap but for sensitive data (credentials, tokens, keys), with extra access and storage conventions.",
+    "outgoing_relations": [],
+    "incoming_relations": [
+      "okf-relations/edges/013-pod-secret"
+    ],
+    "primary_sources": [
+      "concepts/configuration/secret.md",
+      "concepts/security/secrets-good-practices.md"
+    ],
+    "source": "concepts/configuration/secret.md",
+    "text": "Secret: Like a ConfigMap but for sensitive data (credentials, tokens, keys), with extra access and storage conventions. Pod mounts Secret.",
+    "word_count": 20
+  },
+  {
+    "id": "okf-relations/entities/persistent-volume",
+    "kind": "entity",
+    "title": "PersistentVolume",
+    "description": "A piece of storage provisioned in the cluster, independent of any single Pod's lifecycle.",
+    "outgoing_relations": [],
+    "incoming_relations": [
+      "okf-relations/edges/015-persistent-volume-claim-persistent-volume"
+    ],
+    "primary_sources": [
+      "tasks/administer-cluster/change-pv-access-mode-readwriteoncepod.md",
+      "tasks/administer-cluster/change-pv-reclaim-policy.md"
+    ],
+    "source": "tasks/administer-cluster/change-pv-access-mode-readwriteoncepod.md",
+    "text": "PersistentVolume: A piece of storage provisioned in the cluster, independent of any single Pod's lifecycle. PersistentVolumeClaim binds PersistentVolume.",
+    "word_count": 18
+  },
+  {
+    "id": "okf-relations/entities/persistent-volume-claim",
+    "kind": "entity",
+    "title": "PersistentVolumeClaim",
+    "description": "A Pod's request for storage, bound to a matching PersistentVolume so the Pod can mount it.",
+    "outgoing_relations": [
+      "okf-relations/edges/015-persistent-volume-claim-persistent-volume",
+      "okf-relations/edges/016-persistent-volume-claim-storage-class"
+    ],
+    "incoming_relations": [
+      "okf-relations/edges/014-pod-persistent-volume-claim"
+    ],
+    "primary_sources": [],
+    "source": null,
+    "text": "PersistentVolumeClaim: A Pod's request for storage, bound to a matching PersistentVolume so the Pod can mount it. PersistentVolumeClaim binds PersistentVolume. PersistentVolumeClaim provisioned via StorageClass. Pod claims storage via PersistentVolumeClaim.",
+    "word_count": 29
+  },
+  {
+    "id": "okf-relations/entities/storage-class",
+    "kind": "entity",
+    "title": "StorageClass",
+    "description": "Describes a class of storage and its provisioner, used to dynamically create a PersistentVolume for a claim.",
+    "outgoing_relations": [],
+    "incoming_relations": [
+      "okf-relations/edges/016-persistent-volume-claim-storage-class"
+    ],
+    "primary_sources": [
+      "tasks/administer-cluster/change-default-storage-class.md"
+    ],
+    "source": "tasks/administer-cluster/change-default-storage-class.md",
+    "text": "StorageClass: Describes a class of storage and its provisioner, used to dynamically create a PersistentVolume for a claim. PersistentVolumeClaim provisioned via StorageClass.",
+    "word_count": 22
+  },
+  {
+    "id": "okf-relations/entities/service-account",
+    "kind": "entity",
+    "title": "ServiceAccount",
+    "description": "An identity that Pods use to authenticate to the Kubernetes API server.",
+    "outgoing_relations": [],
+    "incoming_relations": [
+      "okf-relations/edges/018-pod-service-account"
+    ],
+    "primary_sources": [],
+    "source": null,
+    "text": "ServiceAccount: An identity that Pods use to authenticate to the Kubernetes API server. Pod authenticates as ServiceAccount.",
+    "word_count": 17
+  },
+  {
+    "id": "okf-relations/entities/role",
+    "kind": "entity",
+    "title": "Role",
+    "description": "A namespaced set of permissions (verbs on resources) within the Kubernetes RBAC system.",
+    "outgoing_relations": [],
+    "incoming_relations": [
+      "okf-relations/edges/019-role-binding-role"
+    ],
+    "primary_sources": [
+      "concepts/security/rbac-good-practices.md"
+    ],
+    "source": "concepts/security/rbac-good-practices.md",
+    "text": "Role: A namespaced set of permissions (verbs on resources) within the Kubernetes RBAC system. RoleBinding grants Role.",
+    "word_count": 17
+  },
+  {
+    "id": "okf-relations/entities/role-binding",
+    "kind": "entity",
+    "title": "RoleBinding",
+    "description": "Grants the permissions in a Role to a user, group, or ServiceAccount, scoped to one Namespace.",
+    "outgoing_relations": [
+      "okf-relations/edges/019-role-binding-role"
+    ],
+    "incoming_relations": [],
+    "primary_sources": [],
+    "source": null,
+    "text": "RoleBinding: Grants the permissions in a Role to a user, group, or ServiceAccount, scoped to one Namespace. RoleBinding grants Role.",
+    "word_count": 20
+  },
+  {
+    "id": "okf-relations/entities/cluster-role",
+    "kind": "entity",
+    "title": "ClusterRole",
+    "description": "Like a Role, but not namespaced - defines permissions cluster-wide or for cluster-scoped resources.",
+    "outgoing_relations": [],
+    "incoming_relations": [
+      "okf-relations/edges/020-cluster-role-binding-cluster-role"
+    ],
+    "primary_sources": [],
+    "source": null,
+    "text": "ClusterRole: Like a Role, but not namespaced - defines permissions cluster-wide or for cluster-scoped resources. ClusterRoleBinding grants ClusterRole.",
+    "word_count": 18
+  },
+  {
+    "id": "okf-relations/entities/cluster-role-binding",
+    "kind": "entity",
+    "title": "ClusterRoleBinding",
+    "description": "Grants the permissions in a ClusterRole cluster-wide, to a user, group, or ServiceAccount.",
+    "outgoing_relations": [
+      "okf-relations/edges/020-cluster-role-binding-cluster-role"
+    ],
+    "incoming_relations": [],
+    "primary_sources": [],
+    "source": null,
+    "text": "ClusterRoleBinding: Grants the permissions in a ClusterRole cluster-wide, to a user, group, or ServiceAccount. ClusterRoleBinding grants ClusterRole.",
+    "word_count": 17
+  },
+  {
+    "id": "okf-relations/entities/namespace",
+    "kind": "entity",
+    "title": "Namespace",
+    "description": "A logical partition inside one cluster; most object kinds live inside exactly one Namespace and are isolated from others.",
+    "outgoing_relations": [
+      "okf-relations/edges/027-namespace-pod",
+      "okf-relations/edges/028-namespace-service"
+    ],
+    "incoming_relations": [
+      "okf-relations/edges/023-resource-quota-namespace",
+      "okf-relations/edges/024-limit-range-namespace"
+    ],
+    "primary_sources": [
+      "concepts/overview/working-with-objects/namespaces.md",
+      "concepts/workloads/pods/user-namespaces.md"
+    ],
+    "source": "concepts/overview/working-with-objects/namespaces.md",
+    "text": "Namespace: A logical partition inside one cluster; most object kinds live inside exactly one Namespace and are isolated from others. Namespace scopes Pod. Namespace scopes Service. ResourceQuota constrains Namespace. LimitRange constrains Namespace.",
+    "word_count": 32
+  },
+  {
+    "id": "okf-relations/entities/node",
+    "kind": "entity",
+    "title": "Node",
+    "description": "A worker machine (VM or physical) that the control plane schedules Pods onto.",
+    "outgoing_relations": [],
+    "incoming_relations": [
+      "okf-relations/edges/017-pod-node"
+    ],
+    "primary_sources": [
+      "concepts/architecture/control-plane-node-communication.md",
+      "concepts/architecture/nodes.md"
+    ],
+    "source": "concepts/architecture/control-plane-node-communication.md",
+    "text": "Node: A worker machine (VM or physical) that the control plane schedules Pods onto. Pod scheduled onto Node.",
+    "word_count": 18
+  },
+  {
+    "id": "okf-relations/entities/horizontal-pod-autoscaler",
+    "kind": "entity",
+    "title": "HorizontalPodAutoscaler",
+    "description": "Automatically adjusts the replica count of a Deployment/ReplicaSet/StatefulSet based on observed metrics like CPU or custom metrics.",
+    "outgoing_relations": [
+      "okf-relations/edges/021-horizontal-pod-autoscaler-deployment"
+    ],
+    "incoming_relations": [],
+    "primary_sources": [
+      "tasks/run-application/horizontal-pod-autoscale-walkthrough.md"
+    ],
+    "source": "tasks/run-application/horizontal-pod-autoscale-walkthrough.md",
+    "text": "HorizontalPodAutoscaler: Automatically adjusts the replica count of a Deployment/ReplicaSet/StatefulSet based on observed metrics like CPU or custom metrics. HorizontalPodAutoscaler scales Deployment.",
+    "word_count": 21
+  },
+  {
+    "id": "okf-relations/entities/pod-disruption-budget",
+    "kind": "entity",
+    "title": "PodDisruptionBudget",
+    "description": "Limits how many Pods of a set can be voluntarily disrupted at once (e.g. during a Node drain), protecting availability.",
+    "outgoing_relations": [
+      "okf-relations/edges/022-pod-disruption-budget-pod"
+    ],
+    "incoming_relations": [],
+    "primary_sources": [],
+    "source": null,
+    "text": "PodDisruptionBudget: Limits how many Pods of a set can be voluntarily disrupted at once (e.g. during a Node drain), protecting availability. PodDisruptionBudget protects Pod.",
+    "word_count": 24
+  },
+  {
+    "id": "okf-relations/entities/resource-quota",
+    "kind": "entity",
+    "title": "ResourceQuota",
+    "description": "Caps the total compute/storage/object-count resources that can be consumed within one Namespace.",
+    "outgoing_relations": [
+      "okf-relations/edges/023-resource-quota-namespace"
+    ],
+    "incoming_relations": [],
+    "primary_sources": [],
+    "source": null,
+    "text": "ResourceQuota: Caps the total compute/storage/object-count resources that can be consumed within one Namespace. ResourceQuota constrains Namespace.",
+    "word_count": 16
+  },
+  {
+    "id": "okf-relations/entities/limit-range",
+    "kind": "entity",
+    "title": "LimitRange",
+    "description": "Sets default and min/max resource constraints for individual Pods/Containers within a Namespace.",
+    "outgoing_relations": [
+      "okf-relations/edges/024-limit-range-namespace"
+    ],
+    "incoming_relations": [],
+    "primary_sources": [],
+    "source": null,
+    "text": "LimitRange: Sets default and min/max resource constraints for individual Pods/Containers within a Namespace. LimitRange constrains Namespace.",
+    "word_count": 16
+  },
+  {
+    "id": "okf-relations/entities/priority-class",
+    "kind": "entity",
+    "title": "PriorityClass",
+    "description": "A named priority level that can be assigned to Pods, used by the scheduler to decide preemption order.",
+    "outgoing_relations": [
+      "okf-relations/edges/025-priority-class-pod"
+    ],
+    "incoming_relations": [],
+    "primary_sources": [],
+    "source": null,
+    "text": "PriorityClass: A named priority level that can be assigned to Pods, used by the scheduler to decide preemption order. PriorityClass assigns priority to Pod.",
+    "word_count": 24
+  }
+]
